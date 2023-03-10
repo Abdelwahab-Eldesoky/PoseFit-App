@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'Login.dart';
 
-/*void main() {
+void main() {
   runApp(const MyApp());
-}*/
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,6 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Login(),
+    );
+  }
+}
+
+/*
+* MaterialApp(
         title: 'Flutter Demo',
         home: Container(
           decoration: BoxDecoration(
@@ -77,5 +86,4 @@ class MyApp extends StatelessWidget {
                 ),
               )),
         ));
-  }
-}
+* */

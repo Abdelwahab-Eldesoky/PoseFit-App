@@ -3,9 +3,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'todayPlan.dart';
 import 'SearchWorkout.dart';
 
-void main() {
+/*void main() {
   runApp(HomePage());
-}
+}*/
 
 class HomePage extends StatelessWidget {
   List<ProgressData> _chartData = [
