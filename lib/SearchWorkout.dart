@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'classes/Workout.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
+
 import 'Home.dart';
+import 'classes/Workout.dart';
 
 class SearchWorkout extends StatefulWidget {
   const SearchWorkout({Key? key}) : super(key: key);
@@ -11,12 +13,22 @@ class SearchWorkout extends StatefulWidget {
 
 class _SearchWorkoutState extends State<SearchWorkout> {
   final searchController = TextEditingController();
-  List<Workout> searchResults = [
-    Workout(15, 3, "Bicep Curls", "assets/bicep_curls.gif"),
-    Workout(20, 4, "Jumping Jacks", "assets/jumping_jacks.gif"),
-    Workout(10, 5, "Lateral Raise", "assets/lateral_raise.gif"),
-    Workout(15, 3, "Mountain Climpers", "assets/mountain_climbers.gif")
-  ];
+  List<Workout> searchResults = [];
+
+  Future<void> findData(String keyword) async{
+
+    List<Workout> tmp=await ApiManager.workoutSearch(keyword);
+
+    searchResults.clear();
+    tmp.forEach((element) {
+      searchResults.add(element);
+    print(element.name);});
+
+    setState(() {
+
+    });
+
+  }
 
   @override
   void initState() {
@@ -34,7 +46,8 @@ class _SearchWorkoutState extends State<SearchWorkout> {
         home: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/search_back-01.jpg"),fit: BoxFit.cover )),
+                  image: AssetImage("assets/search_back-01.jpg"),
+                  fit: BoxFit.cover)),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             bottomNavigationBar: SafeArea(
@@ -68,7 +81,11 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                       ),
                       IconButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()),
+                            );
                           },
                           iconSize: 34,
                           icon: Icon(
@@ -96,6 +113,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                     child: TextField(
                       controller: searchController,
                       autofocus: false,
+                      onChanged: (value) => {findData(value)},
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -136,7 +154,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                       scrollDirection: Axis.vertical,
                       itemBuilder: (ctx, index) {
                         return Container(
-                          height: 400,
+                          height: 350,
                           margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
                           child: Card(
                             elevation: 15,
@@ -153,40 +171,17 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                                       Image.asset(searchResults[index].gifPath),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.fromLTRB(0, 13, 0, 0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, right: 25),
-                                          child: Text(
-                                            searchResults[index].name,
-                                            style: TextStyle(
-                                                fontFamily: "gothic",
-                                                fontSize: 31),
-                                          ),
-                                        ),
+                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  child: Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 18, right: 25),
+                                      child: Text(
+                                        searchResults[index].name,
+                                        style: TextStyle(
+                                            fontFamily: "gothic", fontSize: 31),
                                       ),
-                                      Expanded(
-                                          child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 70, right: 5),
-                                        child: Text(
-                                            searchResults[index]
-                                                    .sets
-                                                    .toString() +
-                                                " X " +
-                                                searchResults[index]
-                                                    .reps
-                                                    .toString(),
-                                            style: TextStyle(
-                                                fontFamily: "gothic",
-                                                fontSize: 32,
-                                                fontWeight: FontWeight.bold)),
-                                      ))
-                                    ],
+                                    ),
                                   ),
                                 )
                               ],

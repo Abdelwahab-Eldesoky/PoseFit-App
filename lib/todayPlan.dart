@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
 import 'classes/Workout.dart';
 import 'Home.dart';
 
@@ -6,14 +7,46 @@ import 'Home.dart';
   runApp(WorkoutPage());
 }*/
 
-class TodayPlan extends StatelessWidget {
-  List<Workout> todayWorkouts = [
+class TodayPlan extends StatefulWidget {
+
+
+  @override
+  State<TodayPlan> createState() => _TodayPlanState();
+}
+
+class _TodayPlanState extends State<TodayPlan> {
+
+  List<Workout> todayWorkouts=[];
+
+
+  Future<void> getData() async{
+
+    List<Workout> tmp=await ApiManager.getPlan();
+
+    tmp.forEach((element) {todayWorkouts.add(element);
+    print(element.name);});
+
+    setState(() {
+
+    });
+
+  }
+
+  /*= [
     Workout(15, 3, "Bicep Curls", "assets/bicep_curls.gif"),
     Workout(20, 4, "Jumping Jacks", "assets/jumping_jacks.gif"),
     Workout(10, 5, "Lateral Raise", "assets/lateral_raise.gif"),
     Workout(15, 3, "Mountain Climpers", "assets/mountain_climbers.gif")
-  ];
+  ];*/
 
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    setState(() {
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

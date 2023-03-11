@@ -40,6 +40,7 @@ dependencies:
   body_detection: ^0.0.3
   file_picker: ^5.2.5
   permission_handler: ^10.2.0
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

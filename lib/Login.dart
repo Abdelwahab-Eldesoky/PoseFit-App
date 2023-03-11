@@ -127,10 +127,11 @@ class Login extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(32.0),
                                     ))),
                                 onPressed: () {
-                                  var text_email = email.text.toString();
-                                  var text_password = password.text.toString();
-                                  print(text_email);
-                                  print(text_password);
+                                  ///////trrrrrrrrryyyyyyyyy
+
+                                  //email.text
+                                  //password.text
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => HomePage()),
