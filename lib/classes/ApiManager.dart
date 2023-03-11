@@ -59,6 +59,7 @@ class ApiManager {
       Workout work =
       new Workout.fromWorkout(workout['workoutName'], workout['gif']);
       workoutList.add(work);
+
     }
     workoutList.forEach((element) {print(element.name);});
     return workoutList;
