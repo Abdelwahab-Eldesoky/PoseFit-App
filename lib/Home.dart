@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'todayPlan.dart';
 import 'SearchWorkout.dart';
@@ -70,7 +71,9 @@ class HomePage extends StatelessWidget {
                           width: 70,
                         ),
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ApiManager.fetchAllWorkouts();
+                            },
                             iconSize: 34,
                             icon: Icon(
                               color: Colors.white,
