@@ -5,13 +5,16 @@ import 'Home.dart';
 import 'classes/Workout.dart';
 
 class SearchWorkout extends StatefulWidget {
-  const SearchWorkout({Key? key}) : super(key: key);
+  final String email;
+
+  SearchWorkout(this.email);
 
   @override
   State<SearchWorkout> createState() => _SearchWorkoutState();
 }
 
 class _SearchWorkoutState extends State<SearchWorkout> {
+
   final searchController = TextEditingController();
   List<Workout> searchResults = [];
 
@@ -84,7 +87,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()),
+                                  builder: (context) => HomePage(widget.email)),
                             );
                           },
                           iconSize: 34,

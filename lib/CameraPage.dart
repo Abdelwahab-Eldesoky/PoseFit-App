@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +56,21 @@ class _CameraAppState extends State<CameraApp> {
         }
       }
     });
+  }Future<void> _sendImage(List<int> bytes) async {
+    // Create a HttpClientRequest and set the content type to "image/jpeg".
+    print('hii');
+    final base64Image = base64Encode(bytes);
+    final Map<String, dynamic> postData = {
+      'image': base64Image,
+    };
+    var data=jsonEncode(postData);
+    print("aaaaaaaaaaaaaaaaa + "+data);
+    print("detaiiiiiiiiilssssssss"+base64Image.toString());
+    final response = await http.post(
+        Uri.parse('http://192.168.1.97:3000/model'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(postData));
+    print(response.body);
   }
 
   @override
@@ -107,8 +127,42 @@ class _CameraAppState extends State<CameraApp> {
                       fontWeight: FontWeight.bold),
                 ),
               )
+              ,
+              FloatingActionButton(
+                // Provide an onPressed callback.
+                onPressed: () async {
+                  // Take the Picture in a try / catch block. If anything goes wrong,
+                  // catch the error.
+                  Timer.periodic(Duration(seconds: 1), (_) async {
+                    print("222");
+                    if (controller.value.isTakingPicture) {
+                      return;
+                    }
+                    final image = await controller.takePicture();
+                    final bytes = await image.readAsBytes();
+                    _sendImage(bytes);
+                  });
+                },
+                child: const Icon(Icons.camera_alt_rounded),
+              ),
             ],
           ),
         ));
+  }
+}
+
+class DisplayPictureScreen extends StatelessWidget {
+  final String imagePath;
+
+  const DisplayPictureScreen({super.key, required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Display the Picture')),
+      // The image is stored as a file on the device. Use the `Image.file`
+      // constructor with the given path to display the image.
+      body: Image.file(File(imagePath)),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
 import 'Home.dart';
 
 class Login extends StatelessWidget {
@@ -127,14 +128,15 @@ class Login extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(32.0),
                                     ))),
                                 onPressed: () {
-                                  ///////trrrrrrrrryyyyyyyyy
 
-                                  //email.text
-                                  //password.text
+
+                                  ApiManager.validateUser(email.text, password.text);
+                                  ApiManager.getPersonName(email.text);
+
 
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => HomePage()),
+                                    MaterialPageRoute(builder: (context) => HomePage(email.text)),
                                   );
                                 },
                                 child: Text(

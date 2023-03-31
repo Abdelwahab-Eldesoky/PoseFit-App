@@ -68,7 +68,7 @@ class ApiManager {
   static Future<bool> validateUser(String email,String password) async {
       print("helloooooo");
     final response = await http.post(
-        Uri.parse('http://192.168.1.7:3000/api/user/login'),
+        Uri.parse('http://192.168.0.103:3000/api/user/login'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'email': email , 'password':password}));
       print("response   "+response.body.toString());
@@ -81,4 +81,17 @@ class ApiManager {
 
   }
 
+  static Future<String> getPersonName(String email) async {
+    final response = await http.post(
+        Uri.parse('http://192.168.0.103:3000/api/user/getName'),
+            headers: {"Content-Type": "application/json"},
+            body: json.encode({'email': email}));
+        print("respond "+response.body.toString());
+    final data = jsonDecode(response.body);
+    String name=data[0]['name'];
+
+    print(name);
+
+    return name;
+  }
 }

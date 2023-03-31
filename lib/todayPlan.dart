@@ -9,6 +9,10 @@ import 'Home.dart';
 
 class TodayPlan extends StatefulWidget {
 
+  final String email;
+
+  TodayPlan(this.email);
+
 
   @override
   State<TodayPlan> createState() => _TodayPlanState();
@@ -88,7 +92,7 @@ class _TodayPlanState extends State<TodayPlan> {
                     ),
                     IconButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(widget.email)),);
                         },
                         iconSize: 36,
                         icon: Icon(
