@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 class User{
 
-  late String username,email,password,gender,activityLevel;
+  late String username,email,password,gender,activityLevel,plan;
   late double weight,height;
   late int age;
 
@@ -59,4 +59,11 @@ class User{
   set setAge(int age) {
     this.age = age;
   }
+  String getPlan() {
+    return plan;
+  }
+  set setplan(String plan) {
+    this.plan = plan;
+  }
+
 }

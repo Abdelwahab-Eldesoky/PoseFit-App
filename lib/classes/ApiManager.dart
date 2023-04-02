@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'User.dart';
 import 'Workout.dart';
 
 class ApiManager {
 
- static final String ip="192.168.1.97";
+ static final String ip="192.168.1.7";
 
   static Future<List<Workout>> getPlan() async {
     print("hahahah");
@@ -66,6 +67,28 @@ class ApiManager {
     workoutList.forEach((element) {print(element.name);});
     return workoutList;
   }
+ static Future<bool> signup(User user) async {
+   print("helloooooo");
+   final response = await http.post(
+       Uri.parse('http://${ip}:3000/api/auth/signup'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({"email":user.getEmail,
+         "password":user.getPassword,
+         "name":user.getUsername,
+         "age":user.getAge,
+         "gender":user.getGender,
+         "height":user.getHeight,
+         "weight":user.getWeight,
+         "plan":"640872f1382967cbd39f6db6",
+         "activityLevel":user.getActivityLevel}));
+   print("response   "+response.body.toString());
+   if(response.body.toString()=="Invalid email or password"){
+     print("false ahee");
+     return false;
+   }
+   return true;
+
+ }
 
   static Future<bool> validateUser(String email,String password) async {
       print("helloooooo");

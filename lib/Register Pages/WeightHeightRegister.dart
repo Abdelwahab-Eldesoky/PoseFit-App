@@ -156,8 +156,8 @@ class WeightHeightRegister extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(32.0),
                                 ))),
                         onPressed: () {
-                          activeUser.setWeight=double.parse(weightController.text);
-                          activeUser.setHeight=double.parse(heightController.text);
+                          activeUser.setWeight=50;
+                          activeUser.setHeight=150;
 
                           Navigator.push(
                             context,

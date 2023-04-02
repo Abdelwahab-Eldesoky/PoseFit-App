@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
 import '../Home.dart';
 import 'package:pose_fit/classes/User.dart';
 
@@ -287,6 +288,7 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                           ))),
                   onPressed: () {
                     widget.activeUser.setActivityLevel=labelValues[sliderIndex.toInt()];
+                    ApiManager.signup(widget.activeUser);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomePage(widget.activeUser.getEmail)),
