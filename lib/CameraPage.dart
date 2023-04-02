@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 late List<CameraDescription> _cameras;
 
@@ -27,7 +27,17 @@ class CameraApp extends StatefulWidget {
 }
 
 class _CameraAppState extends State<CameraApp> {
+  int counter = 0;
+  String correction = "";
+
   late CameraController controller;
+  BackdropFilter myBackDropFilter = new BackdropFilter(
+    filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+    child: Container(
+      color: Colors.transparent.withOpacity(0.5),
+    ),
+  );
+  bool startPressed = false;
 
   @override
   void initState() {
@@ -48,28 +58,35 @@ class _CameraAppState extends State<CameraApp> {
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-          // Handle access errors here.
+            // Handle access errors here.
             break;
           default:
-          // Handle other errors here.
+            // Handle other errors here.
             break;
         }
       }
     });
-  }Future<void> _sendImage(List<int> bytes) async {
+  }
+
+  Future<void> _sendImage(List<int> bytes) async {
     // Create a HttpClientRequest and set the content type to "image/jpeg".
     print('hii');
     final base64Image = base64Encode(bytes);
     final Map<String, dynamic> postData = {
-      'image': base64Image,
+      'data': base64Image,
     };
-    var data=jsonEncode(postData);
-    print("aaaaaaaaaaaaaaaaa + "+data);
-    print("detaiiiiiiiiilssssssss"+base64Image.toString());
+    print("detaiiiiiiiiilssssssss" + base64Image.toString());
     final response = await http.post(
-        Uri.parse('http://192.168.1.97:3000/model'),
+        Uri.parse('http://192.168.1.97:3000/api/model/squat'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(postData));
+    final data=jsonDecode(response.body);
+    counter=data[0]['reps'];
+    correction=data[0]['correction'];
+    print("aywa ana el sadeeeeeek : ${counter} : ${correction}");
+    setState(() {
+
+    });
     print(response.body);
   }
 
@@ -87,82 +104,96 @@ class _CameraAppState extends State<CameraApp> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Counter",
-                style: TextStyle(
-                    fontSize: 45,
-                    color: Color(0xff262e57),
-                    fontFamily: "gothic"),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
-                  "11",
+            body: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: [
+                    Text(
+                      "Counter : ",
+                      style: TextStyle(
+                          fontSize: 45,
+                          color: Color(0xff262e57),
+                          fontFamily: "gothic"),
+                    ),
+                    Text(
+                      "${counter}",
+                      style: TextStyle(
+                          fontSize: 45,
+                          color: Color(0xfff7a007),
+                          fontFamily: "gothic"),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    clipBehavior: Clip.antiAlias,
+                    margin: EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: CameraPreview(controller)),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "${correction}",
                   style: TextStyle(
                       fontSize: 40,
                       color: Color(0xfff7a007),
-                      fontFamily: "gothic",
-                      fontWeight: FontWeight.bold),
+                      fontFamily: "gothic"),
                 ),
-              ),
-              Container(
-                  clipBehavior: Clip.antiAlias,
-                  margin: EdgeInsets.only(right: 10, left: 10),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(50)),
-                  child: CameraPreview(controller)),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Text(
-                  "00:25",
-                  style: TextStyle(
-                      fontSize: 40,
-                      color: Color(0xfff7a007),
-                      fontFamily: "gothic",
-                      fontWeight: FontWeight.bold),
-                ),
-              )
-              ,
-              FloatingActionButton(
-                // Provide an onPressed callback.
-                onPressed: () async {
-                  // Take the Picture in a try / catch block. If anything goes wrong,
-                  // catch the error.
-                  Timer.periodic(Duration(seconds: 1), (_) async {
-                    print("222");
-                    if (controller.value.isTakingPicture) {
-                      return;
-                    }
-                    final image = await controller.takePicture();
-                    final bytes = await image.readAsBytes();
-                    _sendImage(bytes);
-                  });
-                },
-                child: const Icon(Icons.camera_alt_rounded),
-              ),
-            ],
-          ),
-        ));
-  }
-}
+              ],
+            ),
+            myBackDropFilter,
+            startPressed
+                ? Container()
+                : Center(
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(
+                              220,
+                              60,
+                            )),
+                            backgroundColor:
+                                MaterialStateProperty.all(Color(0xff262e57)),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ))),
+                        onPressed: () async {
+                          startPressed = true;
+                          myBackDropFilter = new BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
 
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({super.key, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
-      body: Image.file(File(imagePath)),
-    );
+                          // Take the Picture in a try / catch block. If anything goes wrong,
+                          // catch the error.
+                          Timer.periodic(Duration(milliseconds: 10), (_) async {
+                            print("222");
+                            if (controller.value.isTakingPicture) {
+                              return;
+                            }
+                            final image = await controller.takePicture();
+                            final bytes = await image.readAsBytes();
+                            _sendImage(bytes);
+                          });
+                          setState(() {});
+                        },
+                        child: Text(
+                          "Start",
+                          style: TextStyle(
+                              fontSize: 35,
+                              color: Colors.white,
+                              fontFamily: "gothic",
+                              fontWeight: FontWeight.bold),
+                        )),
+                  )
+          ],
+        )));
   }
 }
