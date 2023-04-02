@@ -6,10 +6,12 @@ import 'Workout.dart';
 
 class ApiManager {
 
+ static final String ip="192.168.1.97";
+
   static Future<List<Workout>> getPlan() async {
     print("hahahah");
     final response = await http.post(
-        Uri.parse('http://192.168.0.103:3000/api/user/plan'),
+        Uri.parse('http://${ip}:3000/api/user/plan'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': "mai@gmail.com"}));
         final data = jsonDecode(response.body);
@@ -36,7 +38,7 @@ class ApiManager {
     print(keyword);
     print("Welcomeeee");
     final response = await http.post(
-        Uri.parse('http://192.168.0.103:3000/api/workout/search'),
+        Uri.parse('http://${ip}:3000/api/workout/search'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'name': keyword}));
         final data = jsonDecode(response.body);
@@ -52,7 +54,7 @@ class ApiManager {
   static Future<List<Workout>> fetchAllWorkouts() async {
 
     print("Welcomeeee");
-    final response = await http.get(Uri.parse('http://192.168.1.7:3000/api/workout/allWorkouts'));
+    final response = await http.get(Uri.parse('http://${ip}:3000/api/workout/allWorkouts'));
     final data = jsonDecode(response.body);
     List<Workout> workoutList = [];
     for (var workout in data) {
@@ -68,11 +70,10 @@ class ApiManager {
   static Future<bool> validateUser(String email,String password) async {
       print("helloooooo");
     final response = await http.post(
-        Uri.parse('http://192.168.0.103:3000/api/user/login'),
+        Uri.parse('http://${ip}:3000/api/auth/login'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'email': email , 'password':password}));
       print("response   "+response.body.toString());
-
         if(response.body.toString()=="Invalid email or password"){
           print("false ahee");
           return false;
@@ -83,7 +84,7 @@ class ApiManager {
 
   static Future<String> getPersonName(String email) async {
     final response = await http.post(
-        Uri.parse('http://192.168.0.103:3000/api/user/getName'),
+        Uri.parse('http://${ip}:3000/api/user/getName'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': email}));
         print("respond "+response.body.toString());

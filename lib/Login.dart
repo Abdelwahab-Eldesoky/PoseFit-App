@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'Home.dart';
+import 'Register Pages/PersonalInfoRegister.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -177,13 +178,13 @@ class Login extends StatelessWidget {
                                           width: 1.5, color: Colors.indigo),
                                     ))),
                                 onPressed: () {
-                                  var text_email = email.toString();
-                                  var text_password = password.toString();
-                                  print(text_email);
-                                  print(text_password);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => PersonalInfoRegister()),
+                                  );
                                 },
                                 child: Text(
-                                  "Sign In",
+                                  "Sign up",
                                   style: TextStyle(fontSize: 25, color: Color(0xff262e57)),
                                 ))
                           ],
