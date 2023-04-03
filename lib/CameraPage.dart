@@ -80,10 +80,13 @@ class _CameraAppState extends State<CameraApp> {
         Uri.parse('http://192.168.1.97:3000/api/model/squat'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(postData));
+    print("respoooooooooooooooonnnnnnnnnnnnnsssssssssssssssssssssseeeeeeeeeeeeeeee "+response.body.toString());
     final data=jsonDecode(response.body);
-    counter=data[0]['reps'];
-    correction=data[0]['correction'];
-    print("aywa ana el sadeeeeeek : ${counter} : ${correction}");
+    print("dataaaaaaa "+ data['correction']);
+    //counter=int.parse(data['reps'].toString());
+    counter=data['reps'];
+    correction =(data["correction"]).toString();
+    print("aywa ana el sadeeeeeek : ${correction} :  ${counter}");
     setState(() {
 
     });

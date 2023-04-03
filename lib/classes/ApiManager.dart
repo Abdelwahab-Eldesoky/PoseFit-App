@@ -6,8 +6,9 @@ import 'User.dart';
 import 'Workout.dart';
 
 class ApiManager {
+  // Hoba ethernet 192.168.1.97
 
- static final String ip="192.168.1.7";
+ static final String ip="192.168.1.97";
 
   static Future<List<Workout>> getPlan() async {
     print("hahahah");
