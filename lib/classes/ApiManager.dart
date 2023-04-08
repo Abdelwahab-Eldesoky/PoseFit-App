@@ -10,12 +10,12 @@ class ApiManager {
 
  static final String ip="192.168.1.97";
 
-  static Future<List<Workout>> getPlan() async {
+  static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
     final response = await http.post(
         Uri.parse('http://${ip}:3000/api/user/plan'),
             headers: {"Content-Type": "application/json"},
-            body: json.encode({'email': "mai@gmail.com"}));
+            body: json.encode({'email': email}));
         final data = jsonDecode(response.body);
     print("hahahah222222");
     List<Workout> workoutList = [];
@@ -98,12 +98,12 @@ class ApiManager {
         headers: {"Content-Type": "application/json"},
         body: json.encode({'email': email , 'password':password}));
       print("response   "+response.body.toString());
-        if(response.body.toString()=="Invalid email or password"){
+      final data = jsonDecode(response.body);
+        if(data["errors"]=="Invalid email or password"){
           print("false ahee");
           return false;
         }
     return true;
-
   }
 
   static Future<String> getPersonName(String email) async {

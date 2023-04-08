@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
+import 'CameraPage.dart';
+import 'package:camera/camera.dart';
 
 import 'Home.dart';
 import 'classes/Workout.dart';
@@ -17,25 +19,37 @@ class _SearchWorkoutState extends State<SearchWorkout> {
 
   final searchController = TextEditingController();
   List<Workout> searchResults = [];
+  List<CameraDescription> cameras=[];
 
-  Future<void> findData(String keyword) async{
-
-    List<Workout> tmp=await ApiManager.workoutSearch(keyword);
-
+  Future<void> findData(String keyword) async {
+    List<Workout> tmp = [];
     searchResults.clear();
+    if (keyword == "") {
+      tmp = await ApiManager.fetchAllWorkouts();
+    } else {
+      tmp = await ApiManager.workoutSearch(keyword);
+    }
     tmp.forEach((element) {
       searchResults.add(element);
-    print(element.name);});
-
-    setState(() {
-
+      print(element.name);
     });
+
+    setState(() {});
+  }
+
+  Future<void> setCameras()async{
+
+    WidgetsFlutterBinding.ensureInitialized();
+    cameras = await availableCameras();
 
   }
 
   @override
   void initState() {
     super.initState();
+    findData("");
+
+    setCameras();
     searchController.addListener(() {
       setState(() {});
     });
@@ -146,7 +160,10 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                                   color: Color(0xff262e57),
                                   size: 35,
                                 ),
-                                onPressed: () => searchController.clear(),
+                                onPressed: () {
+                                  searchController.clear();
+                                  findData("");
+                                },
                               ),
                       ),
                     )),
@@ -156,38 +173,47 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                     child: ListView.builder(
                       scrollDirection: Axis.vertical,
                       itemBuilder: (ctx, index) {
-                        return Container(
-                          height: 350,
-                          margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
-                          child: Card(
-                            elevation: 15,
-                            color: Colors.white70,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Column(
-                              children: <Widget>[
-                                ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      topRight: Radius.circular(30)),
-                                  child:
-                                      Image.asset(searchResults[index].gifPath),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 18, right: 25),
-                                      child: Text(
-                                        searchResults[index].name,
-                                        style: TextStyle(
-                                            fontFamily: "gothic", fontSize: 31),
+                        return GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CameraApp(cameras:cameras)),
+                            );
+                          },
+                          child: Container(
+                            height: 350,
+                            margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
+                            child: Card(
+                              elevation: 15,
+                              color: Colors.white70,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              child: Column(
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30),
+                                        topRight: Radius.circular(30)),
+                                    child:
+                                        Image.asset(searchResults[index].gifPath),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                    child: Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 18, right: 25),
+                                        child: Text(
+                                          searchResults[index].name,
+                                          style: TextStyle(
+                                              fontFamily: "gothic", fontSize: 31),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );

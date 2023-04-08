@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
+
 import 'Home.dart';
 import 'Register Pages/PersonalInfoRegister.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  bool isEmailEmpty = false;
+  bool isPasswordEmpty = false;
+
   @override
   TextEditingController email = TextEditingController();
+
   TextEditingController password = TextEditingController();
 
   Widget build(BuildContext context) {
@@ -21,7 +31,7 @@ class Login extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Container(
             padding: const EdgeInsets.all(30),
-            margin: EdgeInsets.only(top: 90,left: 10,right: 10),
+            margin: EdgeInsets.only(top: 90, left: 10, right: 10),
             child: Column(
               children: [
                 Container(
@@ -46,7 +56,9 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 70,),
+                SizedBox(
+                  height: 70,
+                ),
                 Expanded(
                   child: SizedBox(
                     height: 100,
@@ -59,7 +71,8 @@ class Login extends StatelessWidget {
                             Container(
                               decoration: BoxDecoration(
                                   color: Colors.white38.withOpacity(0.98),
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                         color: Color(0xff262e57),
@@ -69,25 +82,38 @@ class Login extends StatelessWidget {
                                         spreadRadius: 2)
                                   ]),
                               child: TextField(
-                                style: TextStyle(fontFamily: "gothic", fontSize: 21),
+                                style: TextStyle(
+                                    fontFamily: "gothic", fontSize: 21),
                                 controller: email,
+                                onChanged: (value) {
+                                  setState(() {
+                                    email.text.isEmpty
+                                        ? isEmailEmpty = true
+                                        : isEmailEmpty = false;
+                                  });
+                                },
                                 decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.account_circle,
+                                    errorText: isEmailEmpty
+                                        ? '    Email Can\'t Be Empty'
+                                        : null,
+                                    prefixIcon: Icon(Icons.mail,
                                         color: Color(0xff262e57), size: 28),
-                                    hintText: 'Username',
-                                    hintStyle: TextStyle(fontFamily: "gothic", fontSize: 20),
+                                    hintText: 'Email',
+                                    hintStyle: TextStyle(
+                                        fontFamily: "gothic", fontSize: 20),
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none
-                                  /*border: OutlineInputBorder(
+                                    /*border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25)),*/
-                                ),
+                                    ),
                               ),
                             ),
                             SizedBox(height: 50),
                             Container(
                               decoration: BoxDecoration(
                                   color: Colors.white38.withOpacity(0.98),
-                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
                                   boxShadow: [
                                     BoxShadow(
                                         color: Color(0xff262e57),
@@ -97,10 +123,21 @@ class Login extends StatelessWidget {
                                         spreadRadius: 2)
                                   ]),
                               child: TextField(
-                                style: TextStyle(fontFamily: "gothic", fontSize: 21),
+                                style: TextStyle(
+                                    fontFamily: "gothic", fontSize: 21),
                                 controller: password,
                                 obscureText: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    password.text.isEmpty
+                                        ? isPasswordEmpty = true
+                                        : isPasswordEmpty = false;
+                                  });
+                                },
                                 decoration: InputDecoration(
+                                    errorText: isPasswordEmpty
+                                        ? '   Password Can\'t Be Empty'
+                                        : null,
                                     prefixIcon: Icon(
                                       Icons.lock,
                                       color: Color(0xff262e57),
@@ -108,12 +145,13 @@ class Login extends StatelessWidget {
                                     ),
                                     //labelText: 'Password',
                                     hintText: 'Password',
-                                    hintStyle: TextStyle(fontFamily: "gothic", fontSize: 20),
+                                    hintStyle: TextStyle(
+                                        fontFamily: "gothic", fontSize: 20),
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none
-                                  /*border: OutlineInputBorder(
+                                    /*border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25)),*/
-                                ),
+                                    ),
                               ),
                             ),
                             SizedBox(height: 50),
@@ -123,45 +161,65 @@ class Login extends StatelessWidget {
                                       220,
                                       60,
                                     )),
-                                    backgroundColor:
-                                    MaterialStateProperty.all(Color(0xff262e57)),
-                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Color(0xff262e57)),
+                                    shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(32.0),
                                     ))),
-                                onPressed: () {
+                                onPressed: () async {
+                                  if (email.text.isEmpty ||
+                                      password.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        new SnackBar(
+                                            content: new Text(
+                                                "Please fill all data")));
+                                    return;
+                                  }
 
-
-                                  ApiManager.validateUser(email.text, password.text);
+                                  if (await ApiManager.validateUser(
+                                      email.text, password.text)) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              HomePage(email.text)),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        new SnackBar(
+                                          backgroundColor: Color(0xff262e57),
+                                            content: new Text(
+                                                "Please fill right daat or Sign up")));
+                                  }
                                   ApiManager.getPersonName(email.text);
-
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => HomePage(email.text)),
-                                  );
                                 },
                                 child: Text(
                                   "Log In",
-                                  style: TextStyle(fontSize: 25,fontFamily: "gothic"),
+                                  style: TextStyle(
+                                      fontSize: 25, fontFamily: "gothic"),
                                 )),
                             SizedBox(height: 25),
                             Row(children: <Widget>[
                               Expanded(
                                   child: Divider(
-                                    thickness: 1,
-                                    color: Color(0xff262e57),
-                                    indent: 10,
-                                    endIndent: 10,
-                                  )),
+                                thickness: 1,
+                                color: Color(0xff262e57),
+                                indent: 10,
+                                endIndent: 10,
+                              )),
                               Text("OR",
-                                  style: TextStyle(color: Color(0xff262e57), fontFamily: "gothic",fontSize: 22)),
+                                  style: TextStyle(
+                                      color: Color(0xff262e57),
+                                      fontFamily: "gothic",
+                                      fontSize: 22)),
                               Expanded(
                                   child: Divider(
-                                    thickness: 1,
-                                    color: Color(0xff262e57),
-                                    indent: 10,
-                                    endIndent: 10,
-                                  )),
+                                thickness: 1,
+                                color: Color(0xff262e57),
+                                indent: 10,
+                                endIndent: 10,
+                              )),
                             ]),
                             SizedBox(height: 25),
                             ElevatedButton(
@@ -171,8 +229,9 @@ class Login extends StatelessWidget {
                                       60,
                                     )),
                                     backgroundColor:
-                                    MaterialStateProperty.all(Colors.white),
-                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                        MaterialStateProperty.all(Colors.white),
+                                    shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(32.0),
                                       side: const BorderSide(
                                           width: 1.5, color: Colors.indigo),
@@ -180,12 +239,15 @@ class Login extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => PersonalInfoRegister()),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PersonalInfoRegister()),
                                   );
                                 },
                                 child: Text(
                                   "Sign up",
-                                  style: TextStyle(fontSize: 25, color: Color(0xff262e57)),
+                                  style: TextStyle(
+                                      fontSize: 25, color: Color(0xff262e57)),
                                 ))
                           ],
                         ),

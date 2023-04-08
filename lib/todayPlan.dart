@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'classes/Workout.dart';
+import 'package:camera/camera.dart';
+import 'CameraPage.dart';
 import 'Home.dart';
 
 /*void main() {
@@ -20,20 +22,21 @@ class TodayPlan extends StatefulWidget {
 
 class _TodayPlanState extends State<TodayPlan> {
 
-  List<Workout> todayWorkouts=[];
+  List<Workout> todayWorkouts = [];
+  List<CameraDescription> cameras=[];
 
 
-  Future<void> getData() async{
+  Future<void> getData(String email) async {
+    List<Workout> tmp = await ApiManager.getPlan(email);
 
-    List<Workout> tmp=await ApiManager.getPlan();
-
-    tmp.forEach((element) {todayWorkouts.add(element);
-    print(element.name);});
+    tmp.forEach((element) {
+      todayWorkouts.add(element);
+      print(element.name);
+    });
 
     setState(() {
 
     });
-
   }
 
   /*= [
@@ -43,14 +46,24 @@ class _TodayPlanState extends State<TodayPlan> {
     Workout(15, 3, "Mountain Climpers", "assets/mountain_climbers.gif")
   ];*/
 
+
+  Future<void> setCameras()async{
+
+    WidgetsFlutterBinding.ensureInitialized();
+    cameras = await availableCameras();
+
+  }
+
   @override
   void initState() {
     super.initState();
-    getData();
+    getData(widget.email);
+    setCameras();
     setState(() {
 
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -92,7 +105,8 @@ class _TodayPlanState extends State<TodayPlan> {
                     ),
                     IconButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(widget.email)),);
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => HomePage(widget.email)),);
                         },
                         iconSize: 36,
                         icon: Icon(
@@ -161,56 +175,65 @@ class _TodayPlanState extends State<TodayPlan> {
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {
               return Container(
-                height: 400,
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
-                child: Card(
-                  elevation: 15,
-                  color: Colors.white70,
+                  height: 400,
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CameraApp(cameras:cameras)),
+                        );
+                      },
+                      child: Card(
+                      elevation: 15,
+                      color: Colors.white70,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Column(
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30)),
-                        child: Image.asset(todayWorkouts[index].gifPath),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 13, 0, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 18, right: 25),
-                                child: Text(
-                                  todayWorkouts[index].name,
-                                  style: TextStyle(
-                                      fontFamily: "gothic", fontSize: 31),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                                child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 70, right: 5),
-                              child: Text(
-                                  todayWorkouts[index].sets.toString() +
-                                      " X " +
-                                      todayWorkouts[index].reps.toString(),
-                                  style: TextStyle(
-                                      fontFamily: "gothic",
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold)),
-                            ))
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                  borderRadius: BorderRadius.circular(30)),
+              child: Column(
+              children: <Widget>[
+              ClipRRect(
+              borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30)),
+              child: Image.asset(todayWorkouts[index].gifPath),
+              ),
+              Container(
+              margin: EdgeInsets.fromLTRB(0, 13, 0, 0),
+              child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              Expanded(
+              child: Padding(
+              padding:
+              const EdgeInsets.only(left: 18, right: 25),
+              child: Text(
+              todayWorkouts[index].name,
+              style: TextStyle(
+              fontFamily: "gothic", fontSize: 31),
+              ),
+              ),
+              ),
+              Expanded(
+              child: Padding(
+              padding:
+              const EdgeInsets.only(left: 70, right: 5),
+              child: Text(
+              todayWorkouts[index].sets.toString() +
+              " X " +
+              todayWorkouts[index].reps.toString(),
+              style: TextStyle(
+              fontFamily: "gothic",
+              fontSize: 32,
+              fontWeight: FontWeight.bold)),
+              ))
+              ],
+              ),
+              )
+              ],
+              ),
+              ),
+              ),
               );
             },
             itemCount: todayWorkouts.length,

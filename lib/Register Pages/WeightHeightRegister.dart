@@ -1,22 +1,27 @@
-
 import 'package:flutter/material.dart';
+
+import '../classes/User.dart';
 import 'GenderAgeRegister.dart';
-import 'package:pose_fit/classes/User.dart';
-import 'dart:ui';
 
-
-class WeightHeightRegister extends StatelessWidget {
+class WeightHeightRegister extends StatefulWidget {
   User activeUser;
+
   WeightHeightRegister(this.activeUser);
 
-  TextEditingController weightController = TextEditingController();
-  TextEditingController heightController = TextEditingController();
+  @override
+  State<WeightHeightRegister> createState() => _WeightHeightRegisterState();
+}
+
+class _WeightHeightRegisterState extends State<WeightHeightRegister> {
+  bool isWeightEmpty = false;
+  bool isHeightEmpty = false;
+
+  TextEditingController weightController = new TextEditingController();
+  TextEditingController heightController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Register 2",
       home: Scaffold(
         body: Padding(
           padding: EdgeInsets.only(top: 75, left: 10, right: 10, bottom: 20),
@@ -50,7 +55,8 @@ class WeightHeightRegister extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 110),
-              Expanded(child: SizedBox(
+              Expanded(
+                  child: SizedBox(
                 height: 100,
                 child: ListView(
                   children: [
@@ -68,7 +74,6 @@ class WeightHeightRegister extends StatelessWidget {
                       height: 20,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 25),
                       decoration: BoxDecoration(
                           color: Colors.white38.withOpacity(0.98),
                           borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -83,17 +88,29 @@ class WeightHeightRegister extends StatelessWidget {
                       child: TextField(
                         style: TextStyle(fontFamily: "gothic", fontSize: 21),
                         controller: weightController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        onChanged: (value) {
+                          setState(() {
+                            weightController.text.isEmpty
+                                ? isWeightEmpty = true
+                                : isWeightEmpty = false;
+                          });
+                        },
                         decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.account_circle,
-                                color: Color(0xff262e57), size: 28),
+                            errorText:
+                                isWeightEmpty ? 'Weight Can\'t Be Empty' : null,
+                            prefixIcon: Icon(
+                              Icons.monitor_weight_rounded,
+                              color: Color(0xff262e57),
+                              size: 28,
+                            ),
                             hintText: 'Weight',
-                            hintStyle: TextStyle(fontFamily: "gothic", fontSize: 20),
+                            hintStyle:
+                                TextStyle(fontFamily: "gothic", fontSize: 20),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none
-                          /*border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25)),*/
-                        ),
+                            /*border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25)),*/
+                            ),
                       ),
                     ),
                     SizedBox(height: 50),
@@ -111,7 +128,6 @@ class WeightHeightRegister extends StatelessWidget {
                       height: 20,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 25),
                       decoration: BoxDecoration(
                           color: Colors.white38.withOpacity(0.98),
                           borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -126,42 +142,67 @@ class WeightHeightRegister extends StatelessWidget {
                       child: TextField(
                         style: TextStyle(fontFamily: "gothic", fontSize: 21),
                         controller: heightController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        onChanged: (value) {
+                          setState(() {
+                            heightController.text.isEmpty
+                                ? isHeightEmpty = true
+                                : isHeightEmpty = false;
+                          });
+                        },
                         decoration: InputDecoration(
+                            errorText:
+                                isHeightEmpty ? 'Height Can\'t Be Empty' : null,
                             prefixIcon: Icon(
-                              Icons.lock,
+                              Icons.height_rounded,
                               color: Color(0xff262e57),
                               size: 28,
                             ),
                             hintText: 'Height',
-                            hintStyle: TextStyle(fontFamily: "gothic", fontSize: 20),
+                            hintStyle:
+                                TextStyle(fontFamily: "gothic", fontSize: 20),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none
-                          /*border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25)),*/
-                        ),
+                            /*border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25)),*/
+                            ),
                       ),
                     ),
-                    SizedBox(height: 100,),
+                    SizedBox(
+                      height: 100,
+                    ),
                     ElevatedButton(
                         style: ButtonStyle(
                             fixedSize: MaterialStateProperty.all(Size(
                               220,
                               60,
                             )),
-                            backgroundColor: MaterialStateProperty.all(
-                                Color(0xff262e57)),
+                            backgroundColor:
+                                MaterialStateProperty.all(Color(0xff262e57)),
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0),
-                                ))),
+                              borderRadius: BorderRadius.circular(32.0),
+                            ))),
                         onPressed: () {
-                          activeUser.setWeight=50;
-                          activeUser.setHeight=150;
+                          if (heightController.text.isEmpty ||
+                              weightController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                new SnackBar(
+                                    backgroundColor: Color(0xff262e57),
+                                    content:
+                                        new Text("Please fill all details")));
+                            return;
+                          }
+
+                          widget.activeUser.setWeight =
+                              double.parse(weightController.text);
+                          widget.activeUser.setHeight =
+                              double.parse(heightController.text);
 
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => GenderAgeRegister(activeUser)),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    GenderAgeRegister(widget.activeUser)),
                           );
                         },
                         child: Row(

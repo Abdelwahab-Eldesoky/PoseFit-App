@@ -286,13 +286,19 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(32.0),
                           ))),
-                  onPressed: () {
+                  onPressed: () async{
                     widget.activeUser.setActivityLevel=labelValues[sliderIndex.toInt()];
-                    ApiManager.signup(widget.activeUser);
+                    if(await ApiManager.signup(widget.activeUser)){
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomePage(widget.activeUser.getEmail)),
-                    );
+                    );}
+                    else{
+                      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                        backgroundColor: Color(0xff262e57),
+                            content: new Text("Sorry, Your email is already in use")));
+                        return;
+                    }
                   },
                   child: Text(
                     "Submit",

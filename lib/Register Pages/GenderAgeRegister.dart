@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'WorkoutDetailsRegister.dart';
 import 'package:pose_fit/classes/User.dart';
 
+import 'WorkoutDetailsRegister.dart';
 
 class GenderAgeRegister extends StatefulWidget {
   User activeUser;
+
   GenderAgeRegister(this.activeUser);
 
   @override
@@ -13,7 +14,7 @@ class GenderAgeRegister extends StatefulWidget {
 }
 
 class _GenderAgeRegisterState extends State<GenderAgeRegister> {
-  int _value = -1;
+  int isGenderChecked = -1;
   int age = 18;
 
   @override
@@ -71,10 +72,10 @@ class _GenderAgeRegisterState extends State<GenderAgeRegister> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () => setState(() => _value = 0),
+                  onTap: () => setState(() => isGenderChecked = 0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: _value == 0
+                        color: isGenderChecked == 0
                             ? Color(0xfff7a007).withOpacity(0.7)
                             : Colors.transparent,
                         borderRadius: BorderRadius.only(
@@ -89,10 +90,10 @@ class _GenderAgeRegisterState extends State<GenderAgeRegister> {
                 ),
                 SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () => setState(() => _value = 1),
+                  onTap: () => setState(() => isGenderChecked = 1),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: _value == 1
+                        color: isGenderChecked == 1
                             ? Color(0xfff7a007).withOpacity(0.7)
                             : Colors.transparent,
                         borderRadius: BorderRadius.only(
@@ -107,7 +108,9 @@ class _GenderAgeRegisterState extends State<GenderAgeRegister> {
                 ),
               ],
             ),
-            SizedBox(height: 65,),
+            SizedBox(
+              height: 65,
+            ),
             Container(
               alignment: Alignment.center,
               child: Text(
@@ -118,7 +121,9 @@ class _GenderAgeRegisterState extends State<GenderAgeRegister> {
                     color: Color(0xff262e57)),
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(
+              height: 40,
+            ),
             NumberPicker(
                 minValue: 12,
                 maxValue: 70,
@@ -133,37 +138,44 @@ class _GenderAgeRegisterState extends State<GenderAgeRegister> {
                 selectedTextStyle: TextStyle(
                     fontSize: 40,
                     color: Color(0xfff7a007),
-                    fontFamily: "gothic",fontWeight: FontWeight.bold),
+                    fontFamily: "gothic",
+                    fontWeight: FontWeight.bold),
                 onChanged: (value) {
                   age = value;
-                  setState(() {
-
-                  });
+                  setState(() {});
                 }),
-            SizedBox(height: 75,),
+            SizedBox(
+              height: 75,
+            ),
             ElevatedButton(
                 style: ButtonStyle(
                     fixedSize: MaterialStateProperty.all(Size(
                       220,
                       60,
                     )),
-                    backgroundColor: MaterialStateProperty.all(
-                        Color(0xff262e57)),
-                    shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
-                        ))),
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xff262e57)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                    ))),
                 onPressed: () {
-                  if(_value==0){
-                    widget.activeUser.setGender="male";
+                  if (isGenderChecked == -1) {
+                    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                        backgroundColor: Color(0xff262e57),
+                        content: new Text("Please choose your gender")));
+                    return;
                   }
-                  else{
-                    widget.activeUser.setGender="female";
+                  if (isGenderChecked == 0) {
+                    widget.activeUser.setGender = "male";
+                  } else {
+                    widget.activeUser.setGender = "female";
                   }
-                  widget.activeUser.setAge=age;
+                  widget.activeUser.setAge = age;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => WorkoutDetailsRegister(widget.activeUser)),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            WorkoutDetailsRegister(widget.activeUser)),
                   );
                 },
                 child: Row(
