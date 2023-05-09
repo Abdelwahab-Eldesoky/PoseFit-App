@@ -190,7 +190,7 @@ class _LoginState extends State<Login> {
                                         new SnackBar(
                                           backgroundColor: Color(0xff262e57),
                                             content: new Text(
-                                                "Please fill right daat or Sign up")));
+                                                "Please fill right data or Sign up")));
                                   }
                                   ApiManager.getPersonName(email.text);
                                 },

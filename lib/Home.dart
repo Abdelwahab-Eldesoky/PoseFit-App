@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/ChoosePlan.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'SearchWorkout.dart';
-import 'todayPlan.dart';
+import 'PlanDetails.dart';
 
 /*void main() {
   runApp(HomePage());
@@ -221,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TodayPlan(widget.email)),
+                                builder: (context) => PlanDetails(widget.email,0)),
                           );
                         },
                         child: Card(
@@ -268,46 +269,55 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      Card(
-                        margin: const EdgeInsets.all(5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          height: 225,
-                          width: 160,
-                          decoration:
-                              const BoxDecoration(color: Color(0xffab2b3e)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(15, 15, 0, 0),
-                                child: Image(
-                                    image:
-                                        AssetImage("assets/selection_icon.png"),
-                                    width: 48,
-                                    height: 48),
-                              ),
-                              SizedBox(
-                                height: 32,
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                child: Text(
-                                  "Choose\nanother\nplan",
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                    fontFamily: "gothic",
-                                    color: Colors.white,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChoosePlan(widget.email)),
+                          );
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.all(5),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            height: 225,
+                            width: 160,
+                            decoration:
+                                const BoxDecoration(color: Color(0xffab2b3e)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: EdgeInsets.fromLTRB(15, 15, 0, 0),
+                                  child: Image(
+                                      image:
+                                          AssetImage("assets/selection_icon.png"),
+                                      width: 48,
+                                      height: 48),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                ),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                  child: Text(
+                                    "Choose\nanother\nplan",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontFamily: "gothic",
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
