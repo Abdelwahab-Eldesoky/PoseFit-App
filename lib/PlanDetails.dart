@@ -1,31 +1,28 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
-import 'classes/Workout.dart';
-import 'package:camera/camera.dart';
+
 import 'CameraPage.dart';
 import 'Home.dart';
+import 'classes/Workout.dart';
 
 /*void main() {
   runApp(WorkoutPage());
 }*/
 
 class PlanDetails extends StatefulWidget {
-
   final String email;
   final int choosenPlan;
 
-  PlanDetails(this.email,this.choosenPlan);
-
+  PlanDetails(this.email, this.choosenPlan);
 
   @override
   State<PlanDetails> createState() => _PlanDetailsState();
 }
 
 class _PlanDetailsState extends State<PlanDetails> {
-
   List<Workout> todayWorkouts = [];
-  List<CameraDescription> cameras=[];
-
+  List<CameraDescription> cameras = [];
 
   Future<void> getData(String email) async {
     List<Workout> tmp = await ApiManager.getPlan(email);
@@ -35,9 +32,7 @@ class _PlanDetailsState extends State<PlanDetails> {
       print(element.name);
     });
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   /*= [
@@ -47,12 +42,9 @@ class _PlanDetailsState extends State<PlanDetails> {
     Workout(15, 3, "Mountain Climpers", "assets/mountain_climbers.gif")
   ];*/
 
-
-  Future<void> setCameras()async{
-
+  Future<void> setCameras() async {
     WidgetsFlutterBinding.ensureInitialized();
     cameras = await availableCameras();
-
   }
 
   @override
@@ -60,9 +52,7 @@ class _PlanDetailsState extends State<PlanDetails> {
     super.initState();
     getData(widget.email);
     setCameras();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -106,8 +96,11 @@ class _PlanDetailsState extends State<PlanDetails> {
                     ),
                     IconButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => HomePage(widget.email)),);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage(widget.email)),
+                          );
                         },
                         iconSize: 36,
                         icon: Icon(
@@ -176,65 +169,65 @@ class _PlanDetailsState extends State<PlanDetails> {
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {
               return Container(
-                  height: 400,
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
-                  child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CameraApp(cameras:cameras)),
-                        );
-                      },
-                      child: Card(
-                      elevation: 15,
-                      color: Colors.white70,
-                  shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              child: Column(
-              children: <Widget>[
-              ClipRRect(
-              borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30)),
-              child: Image.asset(todayWorkouts[index].gifPath),
-              ),
-              Container(
-              margin: EdgeInsets.fromLTRB(0, 13, 0, 0),
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-              Expanded(
-              child: Padding(
-              padding:
-              const EdgeInsets.only(left: 18, right: 25),
-              child: Text(
-              todayWorkouts[index].name,
-              style: TextStyle(
-              fontFamily: "gothic", fontSize: 31),
-              ),
-              ),
-              ),
-              Expanded(
-              child: Padding(
-              padding:
-              const EdgeInsets.only(left: 70, right: 5),
-              child: Text(
-              todayWorkouts[index].sets.toString() +
-              " X " +
-              todayWorkouts[index].reps.toString(),
-              style: TextStyle(
-              fontFamily: "gothic",
-              fontSize: 32,
-              fontWeight: FontWeight.bold)),
-              ))
-              ],
-              ),
-              )
-              ],
-              ),
-              ),
-              ),
+                height: 400,
+                margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CameraApp(cameras: cameras,reps:todayWorkouts[index].reps,sets:todayWorkouts[index].sets)),
+                    );
+                  },
+                  child: Card(
+                    elevation: 15,
+                    color: Colors.white70,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Column(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30)),
+                          child: Image.asset(todayWorkouts[index].gifPath),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 13, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18, right: 25),
+                                  child: Text(
+                                    todayWorkouts[index].name,
+                                    style: TextStyle(
+                                        fontFamily: "gothic", fontSize: 31),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 70, right: 5),
+                                child: Text(
+                                    todayWorkouts[index].sets.toString() +
+                                        " X " +
+                                        todayWorkouts[index].reps.toString(),
+                                    style: TextStyle(
+                                        fontFamily: "gothic",
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold)),
+                              ))
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               );
             },
             itemCount: todayWorkouts.length,

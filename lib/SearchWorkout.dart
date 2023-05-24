@@ -178,7 +178,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CameraApp(cameras:cameras)),
+                                  builder: (context) => CameraApp(cameras:cameras,reps: searchResults[index].reps,sets: searchResults[index].sets,)),
                             );
                           },
                           child: Container(

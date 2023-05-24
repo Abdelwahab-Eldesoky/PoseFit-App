@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/ChoosePlan.dart';
+import 'package:pose_fit/UpdateProfile.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -100,7 +101,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                       IconButton(
                           onPressed: () {
-                            ApiManager.fetchAllWorkouts();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateProfile(widget.email)),
+                            );
                           },
                           iconSize: 34,
                           icon: Icon(
