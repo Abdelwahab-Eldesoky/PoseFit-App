@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-
+import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'History.dart';
 import 'User.dart';
 import 'Workout.dart';
 
 class ApiManager {
   // Hoba ethernet 192.168.1.97
-
- static final String ip="192.168.0.104";
-
+//https://posefit.onrender.com
+ static final String ip="192.168.1.6";
   static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
     final response = await http.post(
@@ -30,13 +29,10 @@ class ApiManager {
           workout["workout"]['workoutName'], workout["workout"]['gif']);
       workoutList.add(work);
     }
-
     workoutList.forEach((element) {print(element.name);});
     print("Slam");
     return workoutList;
-
 }
-
   static Future<List<Workout>> workoutSearch(String keyword) async {
     print(keyword);
     print("Welcomeeee");
@@ -55,7 +51,6 @@ class ApiManager {
     return workoutList;
   }
   static Future<List<Workout>> fetchAllWorkouts() async {
-
     print("Welcomeeee");
     final response = await http.get(Uri.parse('http://${ip}:3000/api/workout/allWorkouts'));
     final data = jsonDecode(response.body);
@@ -64,7 +59,6 @@ class ApiManager {
       Workout work =
       new Workout.fromWorkout(workout['workoutName'], workout['gif']);
       workoutList.add(work);
-
     }
     workoutList.forEach((element) {print(element.name);});
     return workoutList;
@@ -89,9 +83,7 @@ class ApiManager {
      return false;
    }
    return true;
-
  }
-
   static Future<bool> validateUser(String email,String password) async {
       print("helloooooo");
     final response = await http.post(
@@ -130,26 +122,39 @@ class ApiManager {
    final data = jsonDecode(response.body);
 
    var historyHolder=data[0]['history'];
-   
+
    List<History> historyList = [];
    for (var historyEntry in historyHolder) {
-     print("aaaaaaaaaaaaaaaaaaaaaaa");
-
      /*print(historyEntry['history']['workoutName'].toString());
      print(historyEntry['history']['date']);
      print(historyEntry['history']['reps']);*/
-
      History work =
-     new History(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],0);
+     new History(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps']);
      historyList.add(work);
-     print("mangaaaaaaaaaaa");
-
    }
 
    historyList.forEach((element) {print(element.workoutName);});
 
    return historyList;
-
-   //print(name);
  }
+ static Future<DailyChallenge> getChallenge() async {
+   final response = await http.get(Uri.parse('http://${ip}:3000/api/challenge/dailyChallenge'));
+   final data = jsonDecode(response.body);
+   print("test challenge "+data.toString());
+   Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif']);
+   print(workout.name);
+   DailyChallenge challenge=new DailyChallenge(workout, data[0]['Description'], data[0]['reps'], data[0]['targetMuscele']);
+  print(challenge.description);
+ return challenge;
+ }
+
+ static Future<void> addToHistory(String email,History h) async {
+   final response = await http.put(Uri.parse('http://${ip}:3000/api/user/addhistory'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date}}));
+
+    print(response.body.toString());
+ }
+
+
 }
