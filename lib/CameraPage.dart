@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 
 late List<CameraDescription> _cameras;
@@ -37,6 +38,11 @@ class _CameraAppState extends State<CameraApp> {
   late CameraController controller;
   bool startPressed = false;
   int restTimerNow = 20;
+
+  String lastCorrection="";
+  int repeatCorrectionCounter=0;
+
+  FlutterTts myVoiceCaller=FlutterTts();
 
   BackdropFilter myBackDropFilter = BackdropFilter(
     filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
@@ -78,22 +84,31 @@ class _CameraAppState extends State<CameraApp> {
     const workout = "bicepCurl";
     final base64Image = base64Encode(bytes);
 
-    print("boody gad bta3 el fool : " + base64Image);
     final response = await http.post(
-        Uri.parse('http://192.168.0.105:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.0.104:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
     final data = jsonDecode(response.body);
 
-    print("Hossam Gaded : " + data.toString());
 
     repCounter = data['reps']-(setCounter*widget.reps);
     correction = data["correction"];
+
+
+    if(correction!=lastCorrection||repeatCorrectionCounter==5){
+      await myVoiceCaller.speak(correction);
+      lastCorrection=correction;
+      repeatCorrectionCounter=1;
+    } else{
+      repeatCorrectionCounter++;
+    }
+
     if (repCounter == widget.reps) {
       //controller.dispose();
       setCounter++;
       setFinished = true;
+      correction="";
       startRestTimer();
     }
     setState(() {});
