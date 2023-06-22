@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/UpdateProfile.dart';
+import 'package:pose_fit/WorkoutHistory.dart';
+import 'package:pose_fit/classes/ApiManager.dart';
 
+import 'Home.dart';
 import 'PlanDetails.dart';
 import 'classes/Level.dart';
 
@@ -49,17 +53,25 @@ class _ChoosePlanState extends State<ChoosePlan> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ApiManager.getHistory(widget.email);
+                        },
                         iconSize: 34,
                         icon: Icon(
                           color: Colors.white,
-                          Icons.stacked_line_chart,
+                          Icons.history_rounded,
                         )),
                     SizedBox(
                       width: 70,
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage(widget.email)),
+                          );
+                        },
                         iconSize: 36,
                         icon: Icon(
                           color: Colors.white,
@@ -69,7 +81,13 @@ class _ChoosePlanState extends State<ChoosePlan> {
                       width: 70,
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UpdateProfile(widget.email)),
+                          );
+                        },
                         iconSize: 34,
                         icon: Icon(
                           color: Colors.white,

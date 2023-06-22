@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'History.dart';
 import 'User.dart';
 import 'Workout.dart';
 
 class ApiManager {
   // Hoba ethernet 192.168.1.97
 
- static final String ip="192.168.1.97";
+ static final String ip="192.168.0.104";
 
   static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
@@ -119,4 +120,36 @@ class ApiManager {
 
     return name;
   }
+
+ static Future<List<History>> getHistory(String email) async {
+   final response = await http.post(
+       Uri.parse('http://${ip}:3000/api/user/getHistory'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email}));
+   print("respond "+response.body.toString());
+   final data = jsonDecode(response.body);
+
+   var historyHolder=data[0]['history'];
+   
+   List<History> historyList = [];
+   for (var historyEntry in historyHolder) {
+     print("aaaaaaaaaaaaaaaaaaaaaaa");
+
+     /*print(historyEntry['history']['workoutName'].toString());
+     print(historyEntry['history']['date']);
+     print(historyEntry['history']['reps']);*/
+
+     History work =
+     new History(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],0);
+     historyList.add(work);
+     print("mangaaaaaaaaaaa");
+
+   }
+
+   historyList.forEach((element) {print(element.workoutName);});
+
+   return historyList;
+
+   //print(name);
+ }
 }
