@@ -337,7 +337,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                             ),
                             Text(
                               filteredWorkoutsHistory[index]
-                                  .repsDone
+                                  .reps
                                   .toString(),
                               style:
                                   TextStyle(fontSize: 24, fontFamily: "gothic"),
