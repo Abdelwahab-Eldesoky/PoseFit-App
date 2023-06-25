@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:better_sound_effect/better_sound_effect.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -39,6 +40,11 @@ class _CameraAppState extends State<CameraApp> {
   bool startPressed = false;
   int restTimerNow = 20;
 
+  //sound
+  final soundEffect = BetterSoundEffect();
+  int? soundId;
+  int lastCount=0;
+
   String lastCorrection="";
   int repeatCorrectionCounter=0;
 
@@ -54,6 +60,10 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
+
+    Future.microtask(() async {
+      soundId = await soundEffect.loadAssetAudioFile("assets/counted.wav");
+    });
 
     controller = CameraController(
       // Get a specific camera from the list of available cameras.
@@ -85,7 +95,7 @@ class _CameraAppState extends State<CameraApp> {
     final base64Image = base64Encode(bytes);
 
     final response = await http.post(
-        Uri.parse('http://192.168.0.104:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.0.105:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
@@ -94,6 +104,13 @@ class _CameraAppState extends State<CameraApp> {
 
     repCounter = data['reps']-(setCounter*widget.reps);
     correction = data["correction"];
+
+    if(data['reps']!=lastCount){
+      if (soundId != null) {
+        soundEffect.play(soundId!);
+      }
+      lastCount=data['reps'];
+    }
 
 
     if(correction!=lastCorrection||repeatCorrectionCounter==5){
@@ -116,6 +133,9 @@ class _CameraAppState extends State<CameraApp> {
 
   @override
   void dispose() {
+    if (soundId != null) {
+      soundEffect.release(soundId!);
+    }
     controller.dispose();
     super.dispose();
   }
