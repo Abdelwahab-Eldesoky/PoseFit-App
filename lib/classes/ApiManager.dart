@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'History.dart';
+import 'Rank.dart';
 import 'User.dart';
 import 'Workout.dart';
 
@@ -26,7 +27,7 @@ class ApiManager {
     print("hahahah3333333333");
     for (var workout in extractWorkout) {
       Workout work = new Workout(workout["rep"], workout["sets"],
-          workout["workout"]['workoutName'], workout["workout"]['gif']);
+          workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id']);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -41,10 +42,11 @@ class ApiManager {
             headers: {"Content-Type": "application/json"},
             body: json.encode({'name': keyword}));
         final data = jsonDecode(response.body);
+        print(data.toString());
     List<Workout> workoutList = [];
     for (var workout in data) {
       Workout work =
-      new Workout.fromWorkout(workout['workoutName'], workout['gif']);
+      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id']);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -57,7 +59,7 @@ class ApiManager {
     List<Workout> workoutList = [];
     for (var workout in data) {
       Workout work =
-      new Workout.fromWorkout(workout['workoutName'], workout['gif']);
+      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id']);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -141,7 +143,7 @@ class ApiManager {
    final response = await http.get(Uri.parse('http://${ip}:3000/api/challenge/dailyChallenge'));
    final data = jsonDecode(response.body);
    print("test challenge "+data.toString());
-   Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif']);
+   Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif'], data[0]['workout']['_id']);
    print(workout.name);
    DailyChallenge challenge=new DailyChallenge(workout, data[0]['Description'], data[0]['reps'], data[0]['targetMuscele']);
   print(challenge.description);
@@ -154,7 +156,32 @@ class ApiManager {
        body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date}}));
 
     print(response.body.toString());
+  }
+ static Future<void> addRank(String id,Rank r) async {
+   final response = await http.post(Uri.parse('http://${ip}:3000/api/user/addRank'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'user': id , 'reps':r.reps , 'duration':r.duration}));
+
+   print(response.body.toString());
  }
+ static Future<List<Rank>> fetchAllRanks() async {
+   print("Welcomeeee");
+   final response = await http.get(Uri.parse('http://${ip}:3000/api/user/getRank'));
+   final data = jsonDecode(response.body);
+   print(data.toString());
+   List<Rank> rankList = [];
+   for (var r in data) {
+     Rank rank =
+     new Rank(r['user'], r['duration'],r['reps']);
+     rankList.add(rank);
+   }
+   return rankList;
+ }
+ static Future<void> updateWorkoutStatus(String email,String workoutId) async {
+   final response = await http.put(Uri.parse('http://${ip}:3000/api/user/workoutStatus'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email , 'workoutId':workoutId}));
 
-
+   print(response.body.toString());
+ }
 }
