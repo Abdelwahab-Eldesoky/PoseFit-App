@@ -48,6 +48,7 @@ dependencies:
   page_transition: ^2.0.9
   flutter_native_splash: ^2.2.19
   flutter_tts: ^3.7.0
+  better_sound_effect: ^0.0.3
 
 dev_dependencies:
   flutter_test:
