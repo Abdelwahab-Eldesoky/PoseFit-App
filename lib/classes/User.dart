@@ -6,6 +6,12 @@ class User{
   late double weight,height;
   late int age;
 
+
+  User.fromUser();
+
+  User(this.email, this.password, this.gender, this.activityLevel, this.plan,
+      this.weight, this.height, this.age);
+
   String get getUsername {
     return username;
   }
