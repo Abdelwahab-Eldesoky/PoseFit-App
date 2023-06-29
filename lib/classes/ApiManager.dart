@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'History.dart';
@@ -100,7 +99,21 @@ class ApiManager {
         }
     return true;
   }
+ static Future<User> getUserInfo(String email) async {
+   final response = await http.post(
+       Uri.parse('http://${ip}:3000/api/user/getInfo'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email}));
+   print("respond "+response.body.toString());
+   final data = jsonDecode(response.body);
+   String name=data[0]['name'];
 
+   User user=new User(data[0]['email'],data[0]['password'],data[0]['gender'],data[0]['activityLevel'],data[0]['plan'],data[0]['weight'].toDouble(),data[0]['height'].toDouble(),data[0]['age']);
+
+   print(user.email);
+
+   return user;
+ }
   static Future<String> getPersonName(String email) async {
     final response = await http.post(
         Uri.parse('http://${ip}:3000/api/user/getName'),
@@ -168,11 +181,14 @@ class ApiManager {
    print("Welcomeeee");
    final response = await http.get(Uri.parse('http://${ip}:3000/api/user/getRank'));
    final data = jsonDecode(response.body);
-   print(data.toString());
+   //print(data.toString());
    List<Rank> rankList = [];
-   for (var r in data) {
+   for (var r in data)
+   {
+     print(r['user']['name']);
      Rank rank =
-     new Rank(r['user'], r['duration'],r['reps']);
+     new Rank(r['user']['name'], r['duration'],r['reps']);
+     print(rank.userName);
      rankList.add(rank);
    }
    return rankList;

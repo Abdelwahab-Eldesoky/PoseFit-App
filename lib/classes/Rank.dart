@@ -1,7 +1,7 @@
 class Rank{
-  String userId="";
+  String userName="";
   int reps=0,duration=0;
 
-  Rank(this.userId,this.duration,this.reps);
+  Rank(this.userName,this.duration,this.reps);
 
 }

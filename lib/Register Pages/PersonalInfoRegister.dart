@@ -312,7 +312,7 @@ class _PersonalInfoRegisterState extends State<PersonalInfoRegister> {
                                     return;
                                   }
 
-                                  User activeUser = new User();
+                                  User activeUser = new User.fromUser();
                                   activeUser.setUsername = username.text;
                                   activeUser.setEmail = email.text;
                                   activeUser.setPassword = password.text;
