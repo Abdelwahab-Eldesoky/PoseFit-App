@@ -11,7 +11,7 @@ class ApiManager {
 //https://posefit.onrender.com
 //http://192.168.1.97:3000
 
- static final String domain="http://192.168.0.104:3000";
+ static final String domain="http://192.168.1.6:3000";
   static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
     final response = await http.post(
@@ -210,5 +210,26 @@ class ApiManager {
        body: json.encode({'email': email , 'name': plan }));
 
    print(response.body.toString());
+ }
+ static Future<List<Workout>> getPlanDetails(String PlanName) async {
+   final response = await http.post(
+       Uri.parse('${domain}/api/user/PlanDetail'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'planName': PlanName}));
+   final data = jsonDecode(response.body);
+   print(data.toString());
+   List<Workout> workoutList = [];
+   var extractWorkout;
+   for (var details in data) {
+     extractWorkout = details["workouts"];
+   }
+   for (var workout in extractWorkout) {
+     Workout work = new Workout(workout["rep"], workout["sets"],
+         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status']);
+     workoutList.add(work);
+   }
+   workoutList.forEach((element) {print(element.name);});
+
+   return workoutList;
  }
 }
