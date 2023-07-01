@@ -1,16 +1,20 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:pose_fit/CameraPage.dart';
 import 'package:pose_fit/ChoosePlan.dart';
 import 'package:pose_fit/UpdateProfile.dart';
 import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
+import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'SearchWorkout.dart';
 import 'PlanDetails.dart';
+import 'SearchWorkout.dart';
+import 'classes/Workout.dart';
 
-/*void main() {
-  runApp(HomePage());
-}*/
+void main() {
+  runApp(HomePage("Hoba2001@gmail.com"));
+}
 
 class HomePage extends StatefulWidget {
   final String email;
@@ -23,10 +27,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String name = "";
+  DailyChallenge todayChallenge=DailyChallenge(new Workout.fromWorkout("Not Loaded Yet","",""), "", 0, "");
+  List<CameraDescription> cameras = [];
 
   Future<void> getName() async {
     name = await ApiManager.getPersonName(widget.email);
     setState(() {});
+  }
+
+  Future<void> setCameras() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    cameras = await availableCameras();
+  }
+
+  Future<void> getTodayChallenge() async {
+    print("ana t3baaaaaaaaaaaaaaan");
+    todayChallenge = await ApiManager.getChallenge();
+    setState(() {
+      print(todayChallenge.reps);
+    });
   }
 
   List<ProgressData> _chartData = [
@@ -39,7 +58,12 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
+    setCameras();
     getName();
+    getTodayChallenge();
+    setState(() {
+
+    });
   }
 
   @override
@@ -73,7 +97,8 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => WorkoutHistory(widget.email)),
+                                  builder: (context) =>
+                                      WorkoutHistory(widget.email)),
                             );
                           },
                           iconSize: 34,
@@ -111,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdateProfile(widget.email)),
+                                  builder: (context) =>
+                                      UpdateProfile(widget.email)),
                             );
                           },
                           iconSize: 34,
@@ -132,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                   height: 100,
                   alignment: Alignment.center,
                   child: Text(
-                  "Hi, $name",
+                    "Hi, $name",
                     style: TextStyle(
                         color: Color(0xffffffff),
                         fontFamily: "gothic",
@@ -149,6 +175,7 @@ class _HomePageState extends State<HomePage> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
+                      //Daily Challenge =============================
                       Card(
                         margin: const EdgeInsets.all(5),
                         shape: RoundedRectangleBorder(
@@ -165,19 +192,148 @@ class _HomePageState extends State<HomePage> {
                                       BlendMode.darken),
                                   image: AssetImage("assets/dailyback-01.png"),
                                   fit: BoxFit.cover)),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.all(20),
-                            title: Text(
-                              'Daily\nChallenge',
-                              style: TextStyle(
+                          child: Stack(children: [
+                            ListTile(
+                              contentPadding: EdgeInsets.all(20),
+                              title: Text(
+                                'Daily\nChallenge',
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 30,
-                                  fontFamily: "gothic",
-                                  fontWeight: FontWeight.bold),
+                                  fontSize: 26,
+                                  fontFamily:
+                                      "gothic", /*fontWeight: FontWeight.bold*/
+                                ),
+                              ),
+                              subtitle: Container(
+                                margin: EdgeInsets.only(top: 5),
+                                child: Text(
+                                  todayChallenge.workout.name,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontFamily: "gothic",
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+
+                              //isThreeLine: true,
                             ),
-                          ),
+                            Container(
+                              alignment: Alignment.bottomRight,
+                              child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CameraApp(email: widget.email,cameras: cameras, runningWorkout: todayChallenge.workout, workoutSource: 3.0)
+                                    ));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Text(
+                                        "Start The Challenge",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontFamily: "gothic",
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        color: Color(0xfff7a007),
+                                      )
+                                    ],
+                                  )),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(15),
+                              alignment: Alignment.topRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  print("he5aaa");
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        icon: Icon(
+                                          Icons.info_outline_rounded,
+                                          size: 30,
+                                          color: Color(0xfff7a007),
+                                        ),
+                                        title: Center(
+                                          child: Text(
+                                            "Daily Challenge Description",
+                                            style: TextStyle(
+                                                fontSize: 27,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        content: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                                style: TextStyle(
+                                                  color: Color(0xff262e57),
+                                                  fontFamily: "gothic",
+                                                ), //apply style to all
+                                                children: [
+                                                  TextSpan(
+                                                      text:
+                                                          '\nDaily Challenge is challenge that changed every day to be like competition between user and rank will appear in Ranking board\n\n\n ',
+                                                      style: TextStyle(
+                                                          fontSize: 25)),
+                                                  TextSpan(
+                                                      text:
+                                                          'Idea:\nTry to train max repetitions in less time',
+                                                      style: TextStyle(
+                                                          fontSize: 25,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xfff7a007))),
+                                                ])),
+                                        elevation: 30,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30))),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Center(
+                                                  child: Text(
+                                                "OK",
+                                                style: TextStyle(
+                                                    fontSize: 30,
+                                                    fontFamily: "gothic",
+                                                    color: Color(0xff262e57)),
+                                              )))
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline_rounded,
+                                      color: Colors.white,
+                                      size: 32,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ]),
                         ),
                       ),
+
+                      //Daily Challenge End =============================
+
                       Card(
                         margin: const EdgeInsets.all(5),
                         shape: RoundedRectangleBorder(
@@ -234,7 +390,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PlanDetails(widget.email,0)),
+                                builder: (context) =>
+                                    PlanDetails(widget.email, 0)),
                           );
                         },
                         child: Card(
@@ -308,8 +465,8 @@ class _HomePageState extends State<HomePage> {
                                   alignment: Alignment.centerLeft,
                                   margin: EdgeInsets.fromLTRB(15, 15, 0, 0),
                                   child: Image(
-                                      image:
-                                          AssetImage("assets/selection_icon.png"),
+                                      image: AssetImage(
+                                          "assets/selection_icon.png"),
                                       width: 48,
                                       height: 48),
                                 ),

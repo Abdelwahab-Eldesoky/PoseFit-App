@@ -3,7 +3,7 @@ import 'package:pose_fit/Home.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 
 import 'UpdateProfile.dart';
-import 'classes/History.dart';
+import 'classes/WorkoutHistoryEntry.dart';
 
 void main() {
   runApp(WorkoutHistory("asasdasdsdasd"));
@@ -23,6 +23,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
 
   bool isWorkoutHistoryEmpty = true;
   bool isPlanHistoryEmpty = true;
+  bool isLoaded = false;
 
   /*
     new History("Biceps Curl", "25-6-2023", 20, 89),
@@ -31,17 +32,19 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     new History("Biceps Curl", "25-6-2023", 30, 92),
   */
 
-  List<History> myWorkoutsHistory = [];
-  List<History> filteredWorkoutsHistory = [];
+  List<WorkoutHistoryEntry> myWorkoutsHistory = [];
+  List<WorkoutHistoryEntry> filteredWorkoutsHistory = [];
 
   /////////DON'T FORGET TO CHANGE DATA_TYPE TO PLAN//////////
-  List<History> myPlansHistory = [];
-  List<History> filteredPlansHistory = [];
+  List<WorkoutHistoryEntry> myPlansHistory = [];
+  List<WorkoutHistoryEntry> filteredPlansHistory = [];
 
   //////////////////////////////////////////////////////////
 
   void initHistories() async {
-    List<History> tmp = await ApiManager.getHistory(widget.email);
+    List<WorkoutHistoryEntry> tmp = await ApiManager.getHistory(widget.email).whenComplete(() {
+      isLoaded=true;
+    });
 
     tmp.forEach((historyEntry) {
       myWorkoutsHistory.add(historyEntry);
@@ -230,14 +233,23 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                 ),
               ),
             ),
-            body: TabBarView(
+            body: isLoaded?TabBarView(
               children: [
                 isWorkoutHistoryEmpty
                     ? noHistoryMessage()
                     : WorkoutsListBuilder(),
                 isPlanHistoryEmpty ? noHistoryMessage() : Container(),
               ],
-            ),
+            ):Center(
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: CircularProgressIndicator(
+                  strokeWidth: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xfff7a007)),
+                ),
+              ),
+            )
           ),
         ),
       ),

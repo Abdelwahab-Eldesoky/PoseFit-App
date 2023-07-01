@@ -53,7 +53,7 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                 ),
               ),
               SizedBox(
-                height: 60,
+                height: 180,
               ),
               Container(
                 alignment: Alignment.center,
@@ -90,7 +90,7 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                   inactiveColor: Colors.amber.shade400,
                 ),
               ),
-              SizedBox(height: 50,),
+              /*SizedBox(height: 50,),
               Container(
                 alignment: Alignment.center,
                 child: Text(
@@ -272,7 +272,7 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                         ))
                     ),
                   ]
-              ),
+              ),*/
               SizedBox(height: 40,),
               ElevatedButton(
                   style: ButtonStyle(
