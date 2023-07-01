@@ -8,7 +8,7 @@ import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'PlanDetails.dart';
+import 'TodayPlan.dart';
 import 'SearchWorkout.dart';
 import 'classes/Workout.dart';
 
@@ -391,7 +391,7 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PlanDetails(widget.email, 0)),
+                                    TodayPlan(widget.email, 0)),
                           );
                         },
                         child: Card(
