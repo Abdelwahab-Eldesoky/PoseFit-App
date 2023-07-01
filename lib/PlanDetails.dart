@@ -23,9 +23,12 @@ class PlanDetails extends StatefulWidget {
 class _PlanDetailsState extends State<PlanDetails> {
   List<Workout> todayWorkouts = [];
   List<CameraDescription> cameras = [];
+  bool isLoaded=false;
 
   Future<void> getData(String email) async {
-    List<Workout> tmp = await ApiManager.getPlan(email);
+    List<Workout> tmp = await ApiManager.getPlan(email).whenComplete((){
+      isLoaded=true;
+    });
 
     tmp.forEach((element) {
       todayWorkouts.add(element);
@@ -64,7 +67,7 @@ class _PlanDetailsState extends State<PlanDetails> {
             image: DecorationImage(
                 image: AssetImage("assets/plan_back-01.jpg"),
                 fit: BoxFit.cover)),
-        child: Scaffold(
+        child: isLoaded?Scaffold(
           bottomNavigationBar: SafeArea(
             child: Container(
               height: 63,
@@ -176,7 +179,7 @@ class _PlanDetailsState extends State<PlanDetails> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CameraApp(cameras: cameras,reps:todayWorkouts[index].reps,sets:todayWorkouts[index].sets)),
+                          builder: (context) => CameraApp(email: widget.email,cameras: cameras,runningWorkout: todayWorkouts[index],workoutSource: 1.0,)),
                     );
                   },
                   child: Card(
@@ -210,17 +213,17 @@ class _PlanDetailsState extends State<PlanDetails> {
                               ),
                               Expanded(
                                   child: Padding(
-                                padding:
+                                    padding:
                                     const EdgeInsets.only(left: 70, right: 5),
-                                child: Text(
-                                    todayWorkouts[index].sets.toString() +
-                                        " X " +
-                                        todayWorkouts[index].reps.toString(),
-                                    style: TextStyle(
-                                        fontFamily: "gothic",
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold)),
-                              ))
+                                    child: Text(
+                                        todayWorkouts[index].sets.toString() +
+                                            " X " +
+                                            todayWorkouts[index].reps.toString(),
+                                        style: TextStyle(
+                                            fontFamily: "gothic",
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold)),
+                                  ))
                             ],
                           ),
                         )
@@ -232,7 +235,16 @@ class _PlanDetailsState extends State<PlanDetails> {
             },
             itemCount: todayWorkouts.length,
           ),
-        ),
+        ):Center(
+          child: SizedBox(
+            height: 150,
+            width: 150,
+            child: CircularProgressIndicator(
+              strokeWidth: 6,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xfff7a007)),
+            ),
+          ),
+        )
       ),
 
       // ),

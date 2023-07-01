@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/DailyChallenge.dart';
-import 'History.dart';
+import 'WorkoutHistoryEntry.dart';
 import 'Rank.dart';
 import 'User.dart';
 import 'Workout.dart';
@@ -10,11 +10,13 @@ import 'Workout.dart';
 class ApiManager {
   // Hoba ethernet 192.168.1.97
 //https://posefit.onrender.com
- static final String ip="192.168.1.6";
+//http://192.168.1.97:3000
+
+ static final String domain="http://192.168.0.104:3000";
   static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
     final response = await http.post(
-        Uri.parse('http://${ip}:3000/api/user/plan'),
+        Uri.parse('${domain}/api/user/plan'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': email}));
         final data = jsonDecode(response.body);
@@ -27,7 +29,7 @@ class ApiManager {
     print("hahahah3333333333");
     for (var workout in extractWorkout) {
       Workout work = new Workout(workout["rep"], workout["sets"],
-          workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id']);
+          workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status']);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -38,7 +40,7 @@ class ApiManager {
     print(keyword);
     print("Welcomeeee");
     final response = await http.post(
-        Uri.parse('http://${ip}:3000/api/workout/search'),
+        Uri.parse('${domain}/api/workout/search'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'name': keyword}));
         final data = jsonDecode(response.body);
@@ -54,7 +56,7 @@ class ApiManager {
   }
   static Future<List<Workout>> fetchAllWorkouts() async {
     print("Welcomeeee");
-    final response = await http.get(Uri.parse('http://${ip}:3000/api/workout/allWorkouts'));
+    final response = await http.get(Uri.parse('${domain}/api/workout/allWorkouts'));
     final data = jsonDecode(response.body);
     List<Workout> workoutList = [];
     for (var workout in data) {
@@ -68,7 +70,7 @@ class ApiManager {
  static Future<bool> signup(User user) async {
    print("helloooooo");
    final response = await http.post(
-       Uri.parse('http://${ip}:3000/api/auth/signup'),
+       Uri.parse('${domain}/api/auth/signup'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({"email":user.getEmail,
          "password":user.getPassword,
@@ -89,7 +91,7 @@ class ApiManager {
   static Future<bool> validateUser(String email,String password) async {
       print("helloooooo");
     final response = await http.post(
-        Uri.parse('http://${ip}:3000/api/auth/login'),
+        Uri.parse('${domain}/api/auth/login'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'email': email , 'password':password}));
       print("response   "+response.body.toString());
@@ -103,7 +105,7 @@ class ApiManager {
 
   static Future<String> getPersonName(String email) async {
     final response = await http.post(
-        Uri.parse('http://${ip}:3000/api/user/getName'),
+        Uri.parse('${domain}/api/user/getName'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': email}));
         print("respond "+response.body.toString());
@@ -115,9 +117,9 @@ class ApiManager {
     return name;
   }
 
- static Future<List<History>> getHistory(String email) async {
+ static Future<List<WorkoutHistoryEntry>> getHistory(String email) async {
    final response = await http.post(
-       Uri.parse('http://${ip}:3000/api/user/getHistory'),
+       Uri.parse('${domain}/api/user/getHistory'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email}));
    print("respond "+response.body.toString());
@@ -125,13 +127,13 @@ class ApiManager {
 
    var historyHolder=data[0]['history'];
 
-   List<History> historyList = [];
+   List<WorkoutHistoryEntry> historyList = [];
    for (var historyEntry in historyHolder) {
      /*print(historyEntry['history']['workoutName'].toString());
      print(historyEntry['history']['date']);
      print(historyEntry['history']['reps']);*/
-     History work =
-     new History(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps']);
+     WorkoutHistoryEntry work =
+     new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration']);
      historyList.add(work);
    }
 
@@ -140,7 +142,8 @@ class ApiManager {
    return historyList;
  }
  static Future<DailyChallenge> getChallenge() async {
-   final response = await http.get(Uri.parse('http://${ip}:3000/api/challenge/dailyChallenge'));
+    print("ya 3m msh hn2olk");
+   final response = await http.get(Uri.parse('${domain}/api/challenge/dailyChallenge'));
    final data = jsonDecode(response.body);
    print("test challenge "+data.toString());
    Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif'], data[0]['workout']['_id']);
@@ -150,15 +153,15 @@ class ApiManager {
  return challenge;
  }
 
- static Future<void> addToHistory(String email,History h) async {
-   final response = await http.put(Uri.parse('http://${ip}:3000/api/user/addhistory'),
+ static Future<void> addToHistory(String email,WorkoutHistoryEntry h) async {
+   final response = await http.put(Uri.parse('${domain}/api/user/addhistory'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date}}));
 
     print(response.body.toString());
   }
  static Future<void> addRank(String id,Rank r) async {
-   final response = await http.post(Uri.parse('http://${ip}:3000/api/user/addRank'),
+   final response = await http.post(Uri.parse('${domain}/api/user/addRank'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'user': id , 'reps':r.reps , 'duration':r.duration}));
 
@@ -166,7 +169,7 @@ class ApiManager {
  }
  static Future<List<Rank>> fetchAllRanks() async {
    print("Welcomeeee");
-   final response = await http.get(Uri.parse('http://${ip}:3000/api/user/getRank'));
+   final response = await http.get(Uri.parse('${domain}/api/user/getRank'));
    final data = jsonDecode(response.body);
    print(data.toString());
    List<Rank> rankList = [];
@@ -178,9 +181,17 @@ class ApiManager {
    return rankList;
  }
  static Future<void> updateWorkoutStatus(String email,String workoutId) async {
-   final response = await http.put(Uri.parse('http://${ip}:3000/api/user/workoutStatus'),
+   final response = await http.put(Uri.parse('${domain}/api/user/workoutStatus'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email , 'workoutId':workoutId}));
+
+   print(response.body.toString());
+ }
+
+ static Future<void> AssignPlan(String email,String plan) async {
+   final response = await http.post(Uri.parse('${domain}/api/user/assignPlan'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email , 'name': plan }));
 
    print(response.body.toString());
  }

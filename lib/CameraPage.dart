@@ -7,8 +7,14 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
+import 'package:pose_fit/classes/ApiManager.dart';
 
-late List<CameraDescription> _cameras;
+import 'Home.dart';
+import 'PlanDetails.dart';
+import 'classes/Workout.dart';
+import 'classes/WorkoutHistoryEntry.dart';
+
+
 
 /*Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,10 +27,19 @@ late List<CameraDescription> _cameras;
 class CameraApp extends StatefulWidget {
   /// Default Constructor
   final List<CameraDescription> cameras;
-  final int reps;
-  final int sets;
+  final Workout runningWorkout;
+  final String email;
 
-  const CameraApp({Key? key, required this.cameras, required this.reps,required this.sets})
+  final double workoutSource;
+
+  // 1.0 -> planBased // 2.1 -> searchBased(withSetsAndReps) // 2.2 -> searchBased(till Failure) // 3.0 -> ChallengeBased
+
+  const CameraApp(
+      {Key? key,
+      required this.email,
+      required this.cameras,
+      required this.runningWorkout,
+      required this.workoutSource})
       : super(key: key);
 
   @override
@@ -40,15 +55,25 @@ class _CameraAppState extends State<CameraApp> {
   bool startPressed = false;
   int restTimerNow = 20;
 
+  int setTotalSeconds = 0;
+
   //sound
   final soundEffect = BetterSoundEffect();
   int? soundId;
-  int lastCount=0;
+  int lastCount = 0;
 
-  String lastCorrection="";
-  int repeatCorrectionCounter=0;
+  String lastCorrection = "";
+  int repeatCorrectionCounter = 0;
 
-  FlutterTts myVoiceCaller=FlutterTts();
+  FlutterTts myVoiceCaller = FlutterTts();
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      print("i entereeeeed");
+      super.setState(fn);
+    }
+  }
 
   BackdropFilter myBackDropFilter = BackdropFilter(
     filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
@@ -90,42 +115,177 @@ class _CameraAppState extends State<CameraApp> {
     });
   }
 
+  void setFinishedMessage(){
+    showDialog(
+      context: context,
+      builder: (context) {
+        {
+          return AlertDialog(
+            icon: Icon(
+              Icons.check_circle_outline_outlined,
+              size: 70,
+              color: Color(0xfff7a007),
+            ),
+            title: Center(
+              child: Text(
+                "Good Work!",
+                style: TextStyle(
+                    fontSize: 27,
+                    color: Color(0xff262e57),
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: Text("You have finished the whole set",textAlign: TextAlign.center,style: TextStyle(fontSize: 23,fontFamily: "gothic",color: Color(0xff262e57)),),
+            elevation: 30,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(25))),
+            actions: [
+              TextButton(
+                  onPressed: () {
+
+                    ApiManager.updateWorkoutStatus(widget.email, widget.runningWorkout.id);
+
+                    setFinished = true;
+                    restTimerNow = 0;
+                    controller.dispose();
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PlanDetails(widget.email, 0)),
+                    );
+                  },
+                  child: Center(
+                      child: Text(
+                        "OK",
+                        style: TextStyle(
+                            fontSize: 27,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      )))
+            ],
+          );
+        }
+      },
+    );
+  }
+  void stopTrainingMessage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        {
+          return AlertDialog(
+            icon: Icon(
+              Icons.info_outline_rounded,
+              size: 30,
+              color: Color(0xfff7a007),
+            ),
+            title: Center(
+              child: Text(
+                "Do you want to stop training?",
+                style: TextStyle(
+                    fontSize: 27,
+                    color: Color(0xff262e57),
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: Text(
+              "By stopping training you won't be able to continue on the same progress again",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xfff7a007), fontFamily: "gothic", fontSize: 20),
+            ),
+            elevation: 30,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Center(
+                          child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
+                  TextButton(
+                      onPressed: () {
+                        addToHistory(repCounter);
+                        setFinished = true;
+                        restTimerNow = 0;
+                        controller.dispose();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage(widget.email)),
+                        );
+                      },
+                      child: Center(
+                          child: Text(
+                        "OK",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
+                ],
+              )
+            ],
+          );
+        }
+      },
+    );
+  }
+
   Future<void> _sendImage(List<int> bytes) async {
     const workout = "bicepCurl";
     final base64Image = base64Encode(bytes);
 
     final response = await http.post(
-        Uri.parse('http://192.168.0.105:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.1.159:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
     final data = jsonDecode(response.body);
 
-
-    repCounter = data['reps']-(setCounter*widget.reps);
+    repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
     correction = data["correction"];
 
-    if(data['reps']!=lastCount){
+    if (data['reps'] != lastCount) {
       if (soundId != null) {
         soundEffect.play(soundId!);
       }
-      lastCount=data['reps'];
+      lastCount = data['reps'];
     }
 
-
-    if(correction!=lastCorrection||repeatCorrectionCounter==5){
+    if (correction != lastCorrection || repeatCorrectionCounter == 5) {
       await myVoiceCaller.speak(correction);
-      lastCorrection=correction;
-      repeatCorrectionCounter=1;
-    } else{
+      lastCorrection = correction;
+      repeatCorrectionCounter = 1;
+    } else {
       repeatCorrectionCounter++;
     }
 
-    if (repCounter == widget.reps) {
-      //controller.dispose();
+    if (repCounter == widget.runningWorkout.reps &&
+        (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
+
+      if(setCounter+1==widget.runningWorkout.sets){ // if all sets finished close page
+
+        setFinishedMessage();
+
+      }
+
       setCounter++;
       setFinished = true;
-      correction="";
+      setTotalSeconds = 0;
+      correction = "";
+      addToHistory(widget.runningWorkout.reps);
       startRestTimer();
     }
     setState(() {});
@@ -172,6 +332,59 @@ class _CameraAppState extends State<CameraApp> {
                           color: Color(0xfff7a007),
                           fontFamily: "gothic"),
                     )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment:
+                      widget.workoutSource == 2.2 || widget.workoutSource == 3
+                          ? MainAxisAlignment.spaceEvenly
+                          : MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      ((setTotalSeconds / 60).toInt() < 10
+                              ? "0" + (setTotalSeconds / 60).toInt().toString()
+                              : (setTotalSeconds / 60).toInt().toString()) +
+                          " : " +
+                          ((setTotalSeconds % 60).toInt() < 10
+                              ? "0" + (setTotalSeconds % 60).toInt().toString()
+                              : (setTotalSeconds % 60).toInt().toString()),
+                      style: TextStyle(
+                          fontFamily: "gothic",
+                          color: Color(0xff262e57),
+                          fontSize: 35),
+                    ),
+                    widget.workoutSource == 2.2 || widget.workoutSource == 3
+                        ? ElevatedButton(
+                            onPressed: () {
+                              stopTrainingMessage();
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    const Color(0xffc32b42)),
+                                shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(32.0),
+                                ))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  "Stop Training",
+                                  style: TextStyle(
+                                      fontFamily: "gothic",
+                                      fontSize: 20,
+                                      color: Colors.white),
+                                )
+                              ],
+                            ))
+                        : Container()
                   ],
                 ),
                 const SizedBox(
@@ -229,6 +442,7 @@ class _CameraAppState extends State<CameraApp> {
                           // Take the Picture in a try / catch block. If anything goes wrong,
                           // catch the error.
                           takePictureTimer();
+                          workoutTimer();
 
                           setState(() {});
                         },
@@ -240,7 +454,8 @@ class _CameraAppState extends State<CameraApp> {
                               fontFamily: "gothic",
                               fontWeight: FontWeight.bold),
                         )),
-                  ),setFinished? restProcedure():Container()
+                  ),
+            setFinished ? restProcedure() : Container()
           ],
         )));
   }
@@ -273,28 +488,33 @@ class _CameraAppState extends State<CameraApp> {
     return Center(
         child: restTimerNow == 0
             ? ElevatedButton(
-            style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(Size(
-                  220,
-                  60,
-                )),
-                backgroundColor: MaterialStateProperty.all(
-                    Color(0xfff7a007)),
-                shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
+                style: ButtonStyle(
+                    fixedSize: MaterialStateProperty.all(Size(
+                      220,
+                      60,
+                    )),
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xfff7a007)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32.0),
                     ))),
-            onPressed: () {
-          setState(() {
-            restTimerNow=20;
-            setFinished=false;
-            //controller.initialize();
-            myBackDropFilter = BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
-
-          });
-        }, child: Text("Start next set",style: TextStyle(
-            fontSize: 25, fontFamily: "gothic",color: Color(0xff262e57)),))
+                onPressed: () {
+                  setState(() {
+                    setTotalSeconds = 0;
+                    restTimerNow = 20;
+                    setFinished = false;
+                    //controller.initialize();
+                    myBackDropFilter = BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
+                  });
+                },
+                child: Text(
+                  "Start next set",
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontFamily: "gothic",
+                      color: Color(0xff262e57)),
+                ))
             : SizedBox(
                 height: 200,
                 width: 200,
@@ -321,14 +541,30 @@ class _CameraAppState extends State<CameraApp> {
               ));
   }
 
-  startRestTimer(){
-    Timer restTimer=Timer.periodic(Duration(seconds: 1), (timer) {
+  startRestTimer() {
+    Timer restTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if(restTimerNow<=0 || !setFinished){
+        if (restTimerNow <= 0 || !setFinished) {
           return;
         }
         restTimerNow--;
       });
     });
+  }
+
+  workoutTimer() async {
+    Timer.periodic(const Duration(seconds: 1), (_) {
+      if (setFinished) {
+        return;
+      }
+      setTotalSeconds++;
+      setState(() {});
+    });
+  }
+
+  void addToHistory(int reps) {
+    WorkoutHistoryEntry tmp = new WorkoutHistoryEntry(
+        widget.runningWorkout.name, DateTime.now().toIso8601String(), reps,setTotalSeconds);
+    ApiManager.addToHistory(widget.email, tmp);
   }
 }

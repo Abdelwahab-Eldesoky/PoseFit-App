@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/SettingWorkoutDetails.dart';
+import 'package:pose_fit/UpdateProfile.dart';
+import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'CameraPage.dart';
 import 'package:camera/camera.dart';
@@ -20,14 +23,22 @@ class _SearchWorkoutState extends State<SearchWorkout> {
   final searchController = TextEditingController();
   List<Workout> searchResults = [];
   List<CameraDescription> cameras=[];
+  bool isLoaded=false;
 
   Future<void> findData(String keyword) async {
+    setState(() {
+      isLoaded=false;
+    });
     List<Workout> tmp = [];
     searchResults.clear();
     if (keyword == "") {
-      tmp = await ApiManager.fetchAllWorkouts();
+      tmp = await ApiManager.fetchAllWorkouts().whenComplete((){
+        isLoaded=true;
+      });
     } else {
-      tmp = await ApiManager.workoutSearch(keyword);
+      tmp = await ApiManager.workoutSearch(keyword).whenComplete((){
+        isLoaded=true;
+      });
     }
     tmp.forEach((element) {
       searchResults.add(element);
@@ -87,11 +98,18 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        WorkoutHistory(widget.email)
+                                ));
+                          },
                           iconSize: 34,
                           icon: Icon(
                             color: Colors.white,
-                            Icons.stacked_line_chart,
+                            Icons.history_rounded,
                           )),
                       SizedBox(
                         width: 70,
@@ -113,7 +131,14 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                         width: 70,
                       ),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateProfile(widget.email)
+                                ));
+                          },
                           iconSize: 34,
                           icon: Icon(
                             color: Colors.white,
@@ -167,7 +192,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                               ),
                       ),
                     )),
-                Expanded(
+                isLoaded?Expanded(
                   child: SizedBox(
                     height: 200,
                     child: ListView.builder(
@@ -178,7 +203,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CameraApp(cameras:cameras,reps: searchResults[index].reps,sets: searchResults[index].sets,)),
+                                  builder: (context) => SettingWorkoutDetails(widget.email, searchResults[index])),
                             );
                           },
                           child: Container(
@@ -219,6 +244,18 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                         );
                       },
                       itemCount: searchResults.length,
+                    ),
+                  ),
+                ):Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 100),
+                    child: SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 6,
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xfff7a007)),
+                      ),
                     ),
                   ),
                 ),
