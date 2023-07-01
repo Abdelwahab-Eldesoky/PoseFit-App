@@ -10,17 +10,17 @@ import 'classes/Workout.dart';
   runApp(WorkoutPage());
 }*/
 
-class PlanDetails extends StatefulWidget {
+class TodayPlan extends StatefulWidget {
   final String email;
   final int choosenPlan;
 
-  PlanDetails(this.email, this.choosenPlan);
+  TodayPlan(this.email, this.choosenPlan);
 
   @override
-  State<PlanDetails> createState() => _PlanDetailsState();
+  State<TodayPlan> createState() => _TodayPlanState();
 }
 
-class _PlanDetailsState extends State<PlanDetails> {
+class _TodayPlanState extends State<TodayPlan> {
   List<Workout> todayWorkouts = [];
   List<CameraDescription> cameras = [];
   bool isLoaded=false;

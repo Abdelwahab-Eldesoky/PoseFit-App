@@ -4,7 +4,7 @@ import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 
 import 'Home.dart';
-import 'PlanDetails.dart';
+import 'TodayPlan.dart';
 import 'classes/Level.dart';
 
 class ChoosePlan extends StatefulWidget {
@@ -148,7 +148,7 @@ class _ChoosePlanState extends State<ChoosePlan> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PlanDetails(widget.email, index+1)),
+                          builder: (context) => TodayPlan(widget.email, index+1)),
                     );
                   },
                   child: Card(

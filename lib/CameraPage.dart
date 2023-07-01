@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/ApiManager.dart';
 
 import 'Home.dart';
-import 'PlanDetails.dart';
+import 'TodayPlan.dart';
 import 'classes/Workout.dart';
 import 'classes/WorkoutHistoryEntry.dart';
 
@@ -152,7 +152,7 @@ class _CameraAppState extends State<CameraApp> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PlanDetails(widget.email, 0)),
+                          builder: (context) => TodayPlan(widget.email, 0)),
                     );
                   },
                   child: Center(
