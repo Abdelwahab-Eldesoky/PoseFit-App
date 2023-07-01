@@ -103,7 +103,7 @@ class ApiManager {
   }
  static Future<User> getUserInfo(String email) async {
    final response = await http.post(
-       Uri.parse('http://${ip}:3000/api/user/getInfo'),
+       Uri.parse('http://${domain}:3000/api/user/getInfo'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email}));
    print("respond "+response.body.toString());
