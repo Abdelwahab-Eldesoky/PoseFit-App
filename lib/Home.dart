@@ -8,6 +8,7 @@ import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:pose_fit/classes/DailyChallenge.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import 'RankingBoard.dart';
 import 'TodayPlan.dart';
 import 'SearchWorkout.dart';
 import 'classes/Workout.dart';
@@ -334,31 +335,40 @@ class _HomePageState extends State<HomePage> {
 
                       //Daily Challenge End =============================
 
-                      Card(
-                        margin: const EdgeInsets.all(5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Container(
-                          height: 140,
-                          width: 300,
-                          decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  colorFilter: ColorFilter.mode(
-                                      Color.fromRGBO(38, 46, 87, 0.8),
-                                      BlendMode.darken),
-                                  image: AssetImage("assets/bar_chart-01.png"),
-                                  fit: BoxFit.cover)),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.all(20),
-                            title: Text(
-                              'Ranking\nBoard',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontFamily: "gothic",
-                                  fontWeight: FontWeight.bold),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RankingBoard(widget.email)),
+                          );
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.all(5),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Container(
+                            height: 140,
+                            width: 300,
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    colorFilter: ColorFilter.mode(
+                                        Color.fromRGBO(38, 46, 87, 0.8),
+                                        BlendMode.darken),
+                                    image: AssetImage("assets/bar_chart-01.png"),
+                                    fit: BoxFit.cover)),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(20),
+                              title: Text(
+                                'Ranking\nBoard',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontFamily: "gothic",
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
