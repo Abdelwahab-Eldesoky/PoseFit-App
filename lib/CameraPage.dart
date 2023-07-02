@@ -9,12 +9,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:pose_fit/classes/Rank.dart';
+import 'package:pose_fit/pose_painter.dart';
 
 import 'Home.dart';
 import 'TodayPlan.dart';
 import 'classes/Workout.dart';
 import 'classes/WorkoutHistoryEntry.dart';
-
 
 
 /*Future<void> main() async {
@@ -57,6 +57,9 @@ class _CameraAppState extends State<CameraApp> {
   int restTimerNow = 20;
 
   int setTotalSeconds = 0;
+  
+  //skeleton List
+  List landmarks = [];    //List.filled(8, null, growable: false);
 
   //sound
   final soundEffect = BetterSoundEffect();
@@ -253,19 +256,23 @@ class _CameraAppState extends State<CameraApp> {
     );
   }
 
-  Future<void> _sendImage(List<int> bytes) async {
-    const workout = "bicepCurl";
-    final base64Image = base64Encode(bytes);
+  final workout = "bicepCurl";
+  final ip = "192.168.1.15";
+  final port = "3000";
 
-    final response = await http.post(
-        Uri.parse('http://192.168.0.104:3000/api/model/${workout}'),
+  Future<void> _sendImage(List<int> bytes) async {
+    
+    final base64Image = base64Encode(bytes);
+    
+    final response = await http.post(Uri.parse('http://${ip}:${port}/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
     final data = jsonDecode(response.body);
 
+    landmarks = data['landmarks'];
+    correction = data['correction'];
     repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
-    correction = data["correction"];
 
     if (data['reps'] != lastCount) {
       if (soundId != null) {
@@ -427,6 +434,9 @@ class _CameraAppState extends State<CameraApp> {
                       fontFamily: "gothic"),
                 ),
               ],
+            ),
+            CustomPaint(
+              painter: PosePainter(landmarks),
             ),
             myBackDropFilter,
             startPressed
