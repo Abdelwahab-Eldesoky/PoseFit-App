@@ -30,7 +30,6 @@ class CameraApp extends StatefulWidget {
   final List<CameraDescription> cameras;
   final Workout runningWorkout;
   final String email;
-
   final double workoutSource;
 
   // 1.0 -> planBased // 2.1 -> searchBased(withSetsAndReps) // 2.2 -> searchBased(till Failure) // 3.0 -> ChallengeBased
@@ -227,7 +226,9 @@ class _CameraAppState extends State<CameraApp> {
                         setFinished = true;
                         restTimerNow = 0;
                         controller.dispose();
-                        Rank tmp=new Rank(userName,setTotalSeconds,repCounter);
+                        double progress=repCounter/setTotalSeconds;
+                        Rank tmp=new Rank(userName,setTotalSeconds,repCounter,progress);
+
                         ApiManager.addRank(widget.email, tmp);
                         Navigator.push(
                           context,
