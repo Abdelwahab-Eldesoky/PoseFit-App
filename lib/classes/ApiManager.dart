@@ -141,16 +141,13 @@ class ApiManager {
    var historyHolder=data[0]['history'];
 
    List<WorkoutHistoryEntry> historyList = [];
-   for (var historyEntry in historyHolder) {
-     /*print(historyEntry['history']['workoutName'].toString());
-     print(historyEntry['history']['date']);
-     print(historyEntry['history']['reps']);*/
+   for (var historyEntry in historyHolder.reversed) {
      WorkoutHistoryEntry work =
      new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration']);
      historyList.add(work);
    }
 
-   historyList.forEach((element) {print(element.workoutName);});
+   historyList.forEach((element) {print(element.date);});
 
    return historyList;
  }
@@ -169,14 +166,14 @@ class ApiManager {
  static Future<void> addToHistory(String email,WorkoutHistoryEntry h) async {
    final response = await http.put(Uri.parse('${domain}/api/user/addhistory'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date}}));
+       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date,'duration':h.duration}}));
 
     print(response.body.toString());
   }
- static Future<void> addRank(String id,Rank r) async {
+ static Future<void> addRank(String email,Rank r) async {
    final response = await http.post(Uri.parse('${domain}/api/user/addRank'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'user': id , 'reps':r.reps , 'duration':r.duration}));
+       body: json.encode({'email': email , 'reps':r.reps , 'duration':r.duration}));
 
    print(response.body.toString());
  }
@@ -231,5 +228,12 @@ class ApiManager {
    workoutList.forEach((element) {print(element.name);});
 
    return workoutList;
+ }
+ static Future<void> UpdateInfo(User u) async {
+   final response = await http.put(Uri.parse('${domain}/api/user/update-user'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': u.email , 'updatedData': {'password':u.password , 'name':u.username , 'age':u.age,'height':u.height,'weight':u.weight}}));
+
+   print(response.body.toString());
  }
 }
