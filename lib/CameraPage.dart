@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/ApiManager.dart';
+import 'package:pose_fit/classes/Rank.dart';
 
 import 'Home.dart';
 import 'TodayPlan.dart';
@@ -47,6 +48,7 @@ class CameraApp extends StatefulWidget {
 }
 
 class _CameraAppState extends State<CameraApp> {
+  String userName="Not Loaded Yet";
   int repCounter = 0;
   int setCounter = 0;
   String correction = "";
@@ -75,6 +77,9 @@ class _CameraAppState extends State<CameraApp> {
     }
   }
 
+  void getUserName()async{
+    userName=await ApiManager.getPersonName(widget.email);
+  }
   BackdropFilter myBackDropFilter = BackdropFilter(
     filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
     child: Container(
@@ -85,6 +90,8 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
+
+    getUserName();
 
     Future.microtask(() async {
       soundId = await soundEffect.loadAssetAudioFile("assets/counted.wav");
@@ -220,6 +227,8 @@ class _CameraAppState extends State<CameraApp> {
                         setFinished = true;
                         restTimerNow = 0;
                         controller.dispose();
+                        Rank tmp=new Rank(userName,setTotalSeconds,repCounter);
+                        ApiManager.addRank(widget.email, tmp);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -248,7 +257,7 @@ class _CameraAppState extends State<CameraApp> {
     final base64Image = base64Encode(bytes);
 
     final response = await http.post(
-        Uri.parse('http://192.168.1.159:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.0.104:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
