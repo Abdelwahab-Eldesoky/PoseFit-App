@@ -11,7 +11,7 @@ class ApiManager {
 //https://posefit.onrender.com
 //http://192.168.1.97:3000
 
- static final String domain="http://192.168.0.104:3000";
+ static final String domain="http://192.168.1.6:3000";
   static Future<List<Workout>> getPlan(String email) async {
     print("hahahah");
     final response = await http.post(
@@ -141,16 +141,13 @@ class ApiManager {
    var historyHolder=data[0]['history'];
 
    List<WorkoutHistoryEntry> historyList = [];
-   for (var historyEntry in historyHolder) {
-     /*print(historyEntry['history']['workoutName'].toString());
-     print(historyEntry['history']['date']);
-     print(historyEntry['history']['reps']);*/
+   for (var historyEntry in historyHolder.reversed) {
      WorkoutHistoryEntry work =
      new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration']);
      historyList.add(work);
    }
 
-   historyList.forEach((element) {print(element.workoutName);});
+   historyList.forEach((element) {print(element.date);});
 
    return historyList;
  }
@@ -169,14 +166,14 @@ class ApiManager {
  static Future<void> addToHistory(String email,WorkoutHistoryEntry h) async {
    final response = await http.put(Uri.parse('${domain}/api/user/addhistory'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date}}));
+       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date,'duration':h.duration}}));
 
     print(response.body.toString());
   }
- static Future<void> addRank(String id,Rank r) async {
+ static Future<void> addRank(String email,Rank r) async {
    final response = await http.post(Uri.parse('${domain}/api/user/addRank'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'user': id , 'reps':r.reps , 'duration':r.duration}));
+       body: json.encode({'email': email , 'reps':r.reps , 'duration':r.duration}));
 
    print(response.body.toString());
  }
@@ -208,6 +205,34 @@ class ApiManager {
    final response = await http.post(Uri.parse('${domain}/api/user/assignPlan'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email , 'name': plan }));
+
+   print(response.body.toString());
+ }
+ static Future<List<Workout>> getPlanDetails(String PlanName) async {
+   final response = await http.post(
+       Uri.parse('${domain}/api/user/PlanDetail'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'planName': PlanName}));
+   final data = jsonDecode(response.body);
+   print(data.toString());
+   List<Workout> workoutList = [];
+   var extractWorkout;
+   for (var details in data) {
+     extractWorkout = details["workouts"];
+   }
+   for (var workout in extractWorkout) {
+     Workout work = new Workout(workout["rep"], workout["sets"],
+         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status']);
+     workoutList.add(work);
+   }
+   workoutList.forEach((element) {print(element.name);});
+
+   return workoutList;
+ }
+ static Future<void> UpdateInfo(User u) async {
+   final response = await http.put(Uri.parse('${domain}/api/user/update-user'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': u.email , 'updatedData': {'password':u.password , 'name':u.username , 'age':u.age,'height':u.height,'weight':u.weight}}));
 
    print(response.body.toString());
  }
