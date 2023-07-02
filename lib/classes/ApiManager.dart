@@ -173,7 +173,7 @@ class ApiManager {
  static Future<void> addRank(String email,Rank r) async {
    final response = await http.post(Uri.parse('${domain}/api/user/addRank'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'email': email , 'reps':r.reps , 'duration':r.duration}));
+       body: json.encode({'email': email , 'reps':r.reps , 'duration':r.duration , 'progress':r.progress}));
 
    print(response.body.toString());
  }
@@ -187,7 +187,7 @@ class ApiManager {
    {
      print(r['user']['name']);
      Rank rank =
-     new Rank(r['user']['name'], r['duration'],r['reps']);
+     new Rank(r['user']['name'], r['duration'],r['reps'],r['progress']);
      print(rank.userName);
      rankList.add(rank);
    }

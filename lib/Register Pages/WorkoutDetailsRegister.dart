@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import '../Home.dart';
@@ -14,6 +16,8 @@ class WorkoutDetailsRegister extends StatefulWidget {
 class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
   final List<String> labelValues = ["Not active","Lightly active","Medium active","Athlete"];
   double sliderIndex = 0;
+  double bmi=0;
+  String Plan="";
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +292,45 @@ class _WorkoutDetailsRegisterState extends State<WorkoutDetailsRegister> {
                           ))),
                   onPressed: () async{
                     widget.activeUser.setActivityLevel=labelValues[sliderIndex.toInt()];
+                    double newHieght=widget.activeUser.height/100;
+                    bmi = widget.activeUser.weight / (newHieght * newHieght);
+
+                    if (bmi < 18.5) {
+                      Plan ="Beginner";
+                    }
+                    else if (bmi >= 18.5 && bmi <= 24.9) {
+                      if (widget.activeUser.activityLevel == 'not active') {
+                        Plan ="Beginner";
+                      } else if (widget.activeUser.activityLevel == 'Lightly active') {
+                        Plan="Intermediate";
+                      } else if (widget.activeUser.activityLevel == 'Medium active' ||
+                          widget.activeUser.activityLevel == 'Athlete') {
+                        Plan="Advanced";
+                      }
+                    }
+                    else if (bmi >= 25 && bmi <= 29.9) {
+                      if (widget.activeUser.activityLevel == 'not active') {
+                        Plan ="Beginner";
+                      } else if (widget.activeUser.activityLevel == 'Lightly active'||widget.activeUser.activityLevel == 'Medium active') {
+                        Plan="Intermediate";
+                      } else if (widget.activeUser.activityLevel == 'Athlete') {
+                        Plan="Advanced";
+                      }
+                    }
+                    else if (bmi >= 30) {
+                      if (widget.activeUser.activityLevel == 'not active' || widget.activeUser.activityLevel == 'Lightly active') {
+                        Plan ="Beginner";
+                      }  else if (widget.activeUser.activityLevel == 'Medium active') {
+                        Plan="Intermediate";
+                      } else if (widget.activeUser.activityLevel == 'Athlete') {
+                        Plan="Advanced";
+                      }
+                    }
+                    else{
+                      Plan ="Beginner";
+                    }
                     if(await ApiManager.signup(widget.activeUser)){
+                      await ApiManager.AssignPlan(widget.activeUser.email, Plan);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomePage(widget.activeUser.getEmail)),
