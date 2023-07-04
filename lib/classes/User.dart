@@ -9,7 +9,7 @@ class User{
 
   User.fromUser();
 
-  User(this.email, this.password, this.gender, this.activityLevel, this.plan,
+  User(this.username,this.email, this.password, this.gender, this.activityLevel, this.plan,
       this.weight, this.height, this.age);
 
   String get getUsername {
