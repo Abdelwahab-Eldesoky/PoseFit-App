@@ -11,7 +11,7 @@ class ApiManager {
 //https://posefit.onrender.com
 //http://192.168.1.97:3000
 
- static final String domain="http://192.168.1.6:3000";
+ static final String domain="http://192.168.0.107:3000";
   static Future<List<Workout>> getPlan(String email) async {
     final response = await http.post(
         Uri.parse('${domain}/api/user/plan'),
@@ -102,14 +102,14 @@ class ApiManager {
   }
  static Future<User> getUserInfo(String email) async {
    final response = await http.post(
-       Uri.parse('http://${domain}:3000/api/user/getInfo'),
+       Uri.parse('${domain}/api/user/getInfo'),
        headers: {"Content-Type": "application/json"},
        body: json.encode({'email': email}));
    print("respond "+response.body.toString());
    final data = jsonDecode(response.body);
    String name=data[0]['name'];
 
-   User user=new User(data[0]['email'],data[0]['password'],data[0]['gender'],data[0]['activityLevel'],data[0]['plan'],data[0]['weight'].toDouble(),data[0]['height'].toDouble(),data[0]['age']);
+   User user=new User(data[0]['name'],data[0]['email'],data[0]['password'],data[0]['gender'],data[0]['activityLevel'],data[0]['plan'],data[0]['weight'].toDouble(),data[0]['height'].toDouble(),data[0]['age']);
 
    print(user.email);
 
@@ -234,5 +234,19 @@ class ApiManager {
        body: json.encode({'email': u.email , 'updatedData': {'password':u.password , 'name':u.username , 'age':u.age,'height':u.height,'weight':u.weight}}));
 
    print(response.body.toString());
+ }
+
+ static Future<bool> PasswordConfirm(String email,String password) async {
+   final response = await http.post(
+       Uri.parse('${domain}/api/user/PassConfirm'),
+       headers: {"Content-Type": "application/json"},
+       body: json.encode({'email': email , 'password':password}));
+   final data = jsonDecode(response.body);
+   print(data.toString());
+   if(data.toString()=="false"){
+     print("false ahee");
+     return false;
+   }
+   return true;
  }
 }
