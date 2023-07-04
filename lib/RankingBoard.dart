@@ -269,7 +269,7 @@ class _RankingBoardState extends State<RankingBoard> {
                                   borderRadius: BorderRadius.all(Radius.circular(20)),
                                   child :
                                   LinearProgressIndicator(
-                                    value: allRankings[index].reps/allRankings[index].duration,
+                                    value: allRankings[index].progress,
                                     backgroundColor: Colors.grey,
                                     minHeight: 15,
                                     valueColor: AlwaysStoppedAnimation<Color>(Color(0xff262e57)),

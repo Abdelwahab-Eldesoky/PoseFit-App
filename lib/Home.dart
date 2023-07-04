@@ -28,7 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String name = "";
-  DailyChallenge todayChallenge=DailyChallenge(new Workout.fromWorkout("Not Loaded Yet","",""), "", 0, "");
+  DailyChallenge todayChallenge=DailyChallenge(new Workout.fromWorkout("Not Loaded Yet","","",0), "", 0, "");
   List<CameraDescription> cameras = [];
 
   Future<void> getName() async {

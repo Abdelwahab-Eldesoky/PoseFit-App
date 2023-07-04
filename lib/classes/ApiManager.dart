@@ -13,22 +13,21 @@ class ApiManager {
 
  static final String domain="http://192.168.1.6:3000";
   static Future<List<Workout>> getPlan(String email) async {
-    print("hahahah");
     final response = await http.post(
         Uri.parse('${domain}/api/user/plan'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': email}));
         final data = jsonDecode(response.body);
-    print("hahahah222222");
     List<Workout> workoutList = [];
     var extractWorkout;
     for (var details in data) {
       extractWorkout = details["plan"]["workouts"];
     }
-    print("hahahah3333333333");
+    print("hahahah3333333333"+data.toString());
     for (var workout in extractWorkout) {
+      print(workout["workout"]['duration']);
       Workout work = new Workout(workout["rep"], workout["sets"],
-          workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status']);
+          workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status'],workout["workout"]['duration']);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -47,7 +46,7 @@ class ApiManager {
     List<Workout> workoutList = [];
     for (var workout in data) {
       Workout work =
-      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id']);
+      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id'],workout["duration"]);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -60,7 +59,7 @@ class ApiManager {
     List<Workout> workoutList = [];
     for (var workout in data) {
       Workout work =
-      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id']);
+      new Workout.fromWorkout(workout['workoutName'], workout['gif'],workout['_id'],workout["duration"]);
       workoutList.add(work);
     }
     workoutList.forEach((element) {print(element.name);});
@@ -143,7 +142,7 @@ class ApiManager {
    List<WorkoutHistoryEntry> historyList = [];
    for (var historyEntry in historyHolder.reversed) {
      WorkoutHistoryEntry work =
-     new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration']);
+     new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration'],historyEntry['performance']);
      historyList.add(work);
    }
 
@@ -156,7 +155,7 @@ class ApiManager {
    final response = await http.get(Uri.parse('${domain}/api/challenge/dailyChallenge'));
    final data = jsonDecode(response.body);
    print("test challenge "+data.toString());
-   Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif'], data[0]['workout']['_id']);
+   Workout workout=new Workout.fromWorkout(data[0]['workout']['workoutName'], data[0]['workout']['gif'], data[0]['workout']['_id'],data[0]['workout']["duration"]);
    print(workout.name);
    DailyChallenge challenge=new DailyChallenge(workout, data[0]['Description'], data[0]['reps'], data[0]['targetMuscele']);
   print(challenge.description);
@@ -166,7 +165,7 @@ class ApiManager {
  static Future<void> addToHistory(String email,WorkoutHistoryEntry h) async {
    final response = await http.put(Uri.parse('${domain}/api/user/addhistory'),
        headers: {"Content-Type": "application/json"},
-       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date,'duration':h.duration}}));
+       body: json.encode({'email': email , 'record': {'workoutName':h.workoutName , 'reps':h.reps , 'date':h.date,'duration':h.duration,'performance':h.performance}}));
 
     print(response.body.toString());
   }
@@ -181,7 +180,7 @@ class ApiManager {
    print("Welcomeeee");
    final response = await http.get(Uri.parse('${domain}/api/user/getRank'));
    final data = jsonDecode(response.body);
-   //print(data.toString());
+   print(data.toString());
    List<Rank> rankList = [];
    for (var r in data)
    {
@@ -222,7 +221,7 @@ class ApiManager {
    }
    for (var workout in extractWorkout) {
      Workout work = new Workout(workout["rep"], workout["sets"],
-         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status']);
+         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status'],workout['workout']);
      workoutList.add(work);
    }
    workoutList.forEach((element) {print(element.name);});

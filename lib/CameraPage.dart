@@ -226,10 +226,12 @@ class _CameraAppState extends State<CameraApp> {
                         setFinished = true;
                         restTimerNow = 0;
                         controller.dispose();
-                        double progress=repCounter/setTotalSeconds;
-                        Rank tmp=new Rank(userName,setTotalSeconds,repCounter,progress);
+                       if(widget.workoutSource==3){
+                         double progress=repCounter/setTotalSeconds;
+                         Rank tmp=new Rank(userName,setTotalSeconds,repCounter,progress);
 
-                        ApiManager.addRank(widget.email, tmp);
+                         ApiManager.addRank(widget.email, tmp);
+                       }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -258,7 +260,7 @@ class _CameraAppState extends State<CameraApp> {
     final base64Image = base64Encode(bytes);
 
     final response = await http.post(
-        Uri.parse('http://192.168.0.104:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.1.6:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
@@ -573,8 +575,12 @@ class _CameraAppState extends State<CameraApp> {
   }
 
   void addToHistory(int reps) {
+    double performance=((widget.runningWorkout.duration*reps)/setTotalSeconds)*100;
+    if(performance>100){
+      performance=100;
+    }
     WorkoutHistoryEntry tmp = new WorkoutHistoryEntry(
-        widget.runningWorkout.name, DateTime.now().toIso8601String(), reps,setTotalSeconds);
+        widget.runningWorkout.name, DateTime.now().toIso8601String(), reps,setTotalSeconds,performance);
     ApiManager.addToHistory(widget.email, tmp);
   }
 }
