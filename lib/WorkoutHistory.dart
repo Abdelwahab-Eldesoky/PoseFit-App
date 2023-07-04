@@ -370,7 +370,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                             ),
                             Text(
                               filteredWorkoutsHistory[index]
-                                      .accuracy
+                                      .performance
                                       .toString() +
                                   " %",
                               style:
