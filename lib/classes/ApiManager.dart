@@ -220,8 +220,9 @@ class ApiManager {
      extractWorkout = details["workouts"];
    }
    for (var workout in extractWorkout) {
+     print("here is the fokin duration"+workout['workout']['duration'].toString());
      Workout work = new Workout(workout["rep"], workout["sets"],
-         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status'],workout['workout']);
+         workout["workout"]['workoutName'], workout["workout"]['gif'],workout["workout"]['_id'],workout['status'],workout['workout']['duration']);
      workoutList.add(work);
    }
    workoutList.forEach((element) {print(element.name);});
