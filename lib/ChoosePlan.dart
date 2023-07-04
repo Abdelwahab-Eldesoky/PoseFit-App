@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pose_fit/ChoosenPlanDetails.dart';
 import 'package:pose_fit/UpdateProfile.dart';
 import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
@@ -18,9 +19,9 @@ class ChoosePlan extends StatefulWidget {
 
 class _ChoosePlanState extends State<ChoosePlan> {
   List<Level> allPlans = [
-    Level("Beginner Plan", "assets/easy-01.jpg"),
-    Level("Intermediate Plan", "assets/medium-01.jpg"),
-    Level("Athelete Plan", "assets/hard-01.jpg")
+    Level("Beginner", "assets/easy-01.jpg"),
+    Level("Intermediate", "assets/medium-01.jpg"),
+    Level("Advanced", "assets/hard-01.jpg")
   ];
 
   @override
@@ -148,7 +149,7 @@ class _ChoosePlanState extends State<ChoosePlan> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TodayPlan(widget.email, index+1)),
+                          builder: (context) => ChoosenPlanDetails(widget.email,allPlans[index].label)),
                     );
                   },
                   child: Card(
