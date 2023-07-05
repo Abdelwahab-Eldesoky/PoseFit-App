@@ -232,10 +232,10 @@ class _CameraAppState extends State<CameraApp> {
 
                          ApiManager.addRank(widget.email, tmp);
                        }
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomePage(widget.email)),
+                              builder: (context) => HomePage(widget.email)),(route) => false,
                         );
                       },
                       child: Center(
@@ -260,7 +260,7 @@ class _CameraAppState extends State<CameraApp> {
     final base64Image = base64Encode(bytes);
 
     final response = await http.post(
-        Uri.parse('http://192.168.1.6:3000/api/model/${workout}'),
+        Uri.parse('http://192.168.1.23:3000/api/model/${workout}'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({'data': base64Image}));
 
