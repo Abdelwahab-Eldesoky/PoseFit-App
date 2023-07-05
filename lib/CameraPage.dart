@@ -175,7 +175,80 @@ class _CameraAppState extends State<CameraApp> {
       },
     );
   }
-  void stopTrainingMessage() {
+  void stopWorkoutsSetsBased() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        {
+          return AlertDialog(
+            icon: Icon(
+              Icons.warning_amber_rounded,
+              size: 30,
+              color: Color(0xffc32b42),
+            ),
+            title: Center(
+              child: Text(
+                "Do you want to stop training?",
+                style: TextStyle(
+                    fontSize: 27,
+                    color: Color(0xffc32b42),
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: Text(
+              "You will lose your progress by quiting now",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff262e57), fontFamily: "gothic", fontSize: 20),
+            ),
+            elevation: 30,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Center(
+                          child: Text(
+                            "No, Wait",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: "gothic",
+                                color: Color(0xff262e57)),
+                          ))),
+                  TextButton(
+                      onPressed: () {
+                        addToHistory(repCounter);
+                        setFinished = true;
+                        restTimerNow = 0;
+                        controller.dispose();
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => widget.workoutSource==2.1?HomePage(widget.email):TodayPlan(widget.email, 0)),(route) => false,
+                        );
+                      },
+                      child: Center(
+                          child: Text(
+                            "Yes, Sure",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: "gothic",
+                                color: Color(0xffc32b42)),
+                          ))),
+                ],
+              )
+            ],
+          );
+        }
+      },
+    );
+  }
+  void stopSoloWorkouts() {
     showDialog(
       context: context,
       builder: (context) {
@@ -368,10 +441,11 @@ class _CameraAppState extends State<CameraApp> {
                           color: Color(0xff262e57),
                           fontSize: 35),
                     ),
-                    widget.workoutSource == 2.2 || widget.workoutSource == 3
-                        ? ElevatedButton(
+                    SizedBox(width: 20,),
+                    ElevatedButton(
                             onPressed: () {
-                              stopTrainingMessage();
+                              widget.workoutSource == 2.2 || widget.workoutSource == 3?
+                              stopSoloWorkouts():stopWorkoutsSetsBased();
                             },
                             style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(
@@ -396,7 +470,6 @@ class _CameraAppState extends State<CameraApp> {
                                 )
                               ],
                             ))
-                        : Container()
                   ],
                 ),
                 const SizedBox(
