@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import '../Home.dart';
 import 'package:pose_fit/classes/User.dart';
 
+// ignore: must_be_immutable
 class WorkoutDetailsRegister extends StatefulWidget {
   User activeUser;
   WorkoutDetailsRegister(this.activeUser);

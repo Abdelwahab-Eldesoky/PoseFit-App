@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class User{
 
   late String username,email,password,gender,activityLevel,plan;

@@ -10,6 +10,7 @@ void main() {
   runApp(RankingBoard("Hoba2001@gmail.com"));
 }
 
+// ignore: must_be_immutable
 class RankingBoard extends StatefulWidget {
   String email;
 

@@ -6,6 +6,7 @@ import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:pose_fit/classes/User.dart';
 
+// ignore: must_be_immutable
 class UpdateProfile extends StatefulWidget {
   String email;
 

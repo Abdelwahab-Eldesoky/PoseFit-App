@@ -9,6 +9,7 @@ void main() {
   runApp(WorkoutHistory("asasdasdsdasd"));
 }
 
+// ignore: must_be_immutable
 class WorkoutHistory extends StatefulWidget {
   String email;
 

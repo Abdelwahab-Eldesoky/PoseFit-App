@@ -4,6 +4,7 @@ import 'package:pose_fit/classes/User.dart';
 
 import 'WorkoutDetailsRegister.dart';
 
+// ignore: must_be_immutable
 class GenderAgeRegister extends StatefulWidget {
   User activeUser;
 

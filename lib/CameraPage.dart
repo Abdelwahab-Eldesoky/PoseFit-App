@@ -9,13 +9,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pose_fit/classes/ApiManager.dart';
 import 'package:pose_fit/classes/Rank.dart';
+import 'package:pose_fit/pose_painter.dart';
 
 import 'Home.dart';
 import 'TodayPlan.dart';
 import 'classes/Workout.dart';
 import 'classes/WorkoutHistoryEntry.dart';
-
-
 
 /*Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +56,10 @@ class _CameraAppState extends State<CameraApp> {
   int restTimerNow = 20;
 
   int setTotalSeconds = 0;
+  
+  //skeleton
+  List landmarks = []; //List.filled(8, null, growable: false);
+  bool poseIsCorrect = false;
 
   //sound
   final soundEffect = BetterSoundEffect();
@@ -71,7 +74,7 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void setState(fn) {
     if (mounted) {
-      print("i entereeeeed");
+      //print("i entereeeeed");
       super.setState(fn);
     }
   }
@@ -98,9 +101,11 @@ class _CameraAppState extends State<CameraApp> {
 
     controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.cameras[0],
+      widget.cameras[1],
       // Define the resolution to use.
       ResolutionPreset.medium,
+      enableAudio: false,
+      imageFormatGroup: ImageFormatGroup.jpeg
     );
     controller.initialize().then((_) {
       if (!mounted) {
@@ -320,7 +325,7 @@ class _CameraAppState extends State<CameraApp> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-            body: Stack(
+          body: Stack(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -430,6 +435,9 @@ class _CameraAppState extends State<CameraApp> {
                 ),
               ],
             ),
+            CustomPaint(
+              painter: PosePainter(landmarks, poseIsCorrect),
+            ),
             myBackDropFilter,
             startPressed
                 ? Container()
@@ -453,7 +461,7 @@ class _CameraAppState extends State<CameraApp> {
 
                           // Take the Picture in a try / catch block. If anything goes wrong,
                           // catch the error.
-                          takePictureTimer();
+                          startCameraStream();
                           workoutTimer();
 
                           setState(() {});
@@ -481,10 +489,10 @@ class _CameraAppState extends State<CameraApp> {
         return;
       }
 
-      final image = await controller.takePicture();
-      final bytes = await image.readAsBytes();
+      // final image = await controller.takePicture();
+      // final bytes = await image.readAsBytes();
 
-      _sendImage(bytes);
+      //_sendImage(bytes);
     });
   }
 
@@ -582,5 +590,77 @@ class _CameraAppState extends State<CameraApp> {
     WorkoutHistoryEntry tmp = new WorkoutHistoryEntry(
         widget.runningWorkout.name, DateTime.now().toIso8601String(), reps,setTotalSeconds,performance);
     ApiManager.addToHistory(widget.email, tmp);
+  }
+
+  final ip = "192.168.1.15";
+  final port = "5000";
+
+void startCameraStream() async {
+
+    var lastAccess = DateTime.now();
+    var isInProgress = false;
+
+    controller.startImageStream((image) async {
+      
+      if (isInProgress ||
+          DateTime.now().difference(lastAccess).inMilliseconds < 100 || setFinished) {
+        return;
+      }
+
+      lastAccess = DateTime.now();
+
+      try {
+        
+        isInProgress = true;
+
+        final response = await http.post(
+            Uri.parse('http://$ip:$port/${widget.runningWorkout.id}'),
+            headers: {"Content-Type": "application/json"},
+            body: image.planes[0].bytes);
+
+        isInProgress = false;
+
+        final data = json.decode(response.body);
+
+        repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
+        correction = data["correction"];
+        landmarks = data['landmarks'];
+        poseIsCorrect = data['poseIsCorrect'];
+
+        if (data['reps'] != lastCount) {
+          if (soundId != null) {
+            soundEffect.play(soundId!);
+          }
+          lastCount = data['reps'];
+        }
+
+        if (correction != lastCorrection || repeatCorrectionCounter == 5) {
+          await myVoiceCaller.speak(correction);
+          lastCorrection = correction;
+          repeatCorrectionCounter = 1;
+        } else {
+          repeatCorrectionCounter++;
+        }
+
+        if (repCounter == widget.runningWorkout.reps &&
+            (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
+          if (setCounter + 1 == widget.runningWorkout.sets) {
+            // if all sets finished close page
+
+            setFinishedMessage();
+          }
+
+          setCounter++;
+          setFinished = true;
+          setTotalSeconds = 0;
+          correction = "";
+          addToHistory(widget.runningWorkout.reps);
+          startRestTimer();
+        }
+
+      } catch (e) {
+        controller.stopImageStream();
+      }
+    });
   }
 }

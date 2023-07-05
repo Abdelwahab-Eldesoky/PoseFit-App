@@ -13,7 +13,6 @@ class _LoginState extends State<Login> {
   bool isEmailEmpty = false;
   bool isPasswordEmpty = false;
 
-  @override
   TextEditingController email = TextEditingController();
 
   TextEditingController password = TextEditingController();
