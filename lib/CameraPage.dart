@@ -35,10 +35,10 @@ class CameraApp extends StatefulWidget {
 
   const CameraApp(
       {Key? key,
-        required this.email,
-        required this.cameras,
-        required this.runningWorkout,
-        required this.workoutSource})
+      required this.email,
+      required this.cameras,
+      required this.runningWorkout,
+      required this.workoutSource})
       : super(key: key);
 
   @override
@@ -100,8 +100,8 @@ class _CameraAppState extends State<CameraApp> {
     });
 
     controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-        widget.cameras[0],
+        // Get a specific camera from the list of available cameras.
+        widget.cameras[1],
         // Define the resolution to use.
         ResolutionPreset.medium,
         enableAudio: false,
@@ -115,10 +115,10 @@ class _CameraAppState extends State<CameraApp> {
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-          // Handle access errors here.
+            // Handle access errors here.
             break;
           default:
-          // Handle other errors here.
+            // Handle other errors here.
             break;
         }
       }
@@ -172,12 +172,12 @@ class _CameraAppState extends State<CameraApp> {
                   },
                   child: Center(
                       child: Text(
-                        "OK",
-                        style: TextStyle(
-                            fontSize: 27,
-                            fontFamily: "gothic",
-                            color: Color(0xff262e57)),
-                      )))
+                    "OK",
+                    style: TextStyle(
+                        fontSize: 27,
+                        fontFamily: "gothic",
+                        color: Color(0xff262e57)),
+                  )))
             ],
           );
         }
@@ -224,12 +224,12 @@ class _CameraAppState extends State<CameraApp> {
                       },
                       child: Center(
                           child: Text(
-                            "No, Wait",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xff262e57)),
-                          ))),
+                        "No, Wait",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
                   TextButton(
                       onPressed: () {
                         addToHistory(repCounter);
@@ -242,17 +242,17 @@ class _CameraAppState extends State<CameraApp> {
                               builder: (context) => widget.workoutSource == 2.1
                                   ? HomePage(widget.email)
                                   : TodayPlan(widget.email, 0)),
-                              (route) => false,
+                          (route) => false,
                         );
                       },
                       child: Center(
                           child: Text(
-                            "Yes, Sure",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xffc32b42)),
-                          ))),
+                        "Yes, Sure",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xffc32b42)),
+                      ))),
                 ],
               )
             ],
@@ -301,12 +301,12 @@ class _CameraAppState extends State<CameraApp> {
                       },
                       child: Center(
                           child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xff262e57)),
-                          ))),
+                        "Cancel",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
                   TextButton(
                       onPressed: () {
                         addToHistory(repCounter);
@@ -324,17 +324,17 @@ class _CameraAppState extends State<CameraApp> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomePage(widget.email)),
-                              (route) => false,
+                          (route) => false,
                         );
                       },
                       child: Center(
                           child: Text(
-                            "OK",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xff262e57)),
-                          ))),
+                        "OK",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
                 ],
               )
             ],
@@ -409,162 +409,162 @@ class _CameraAppState extends State<CameraApp> {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
             body: Stack(
-              children: [
-                Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Counter : ",
-                          style: TextStyle(
-                            fontSize: 45,
-                            color: Color(0xff262e57),
-                            fontFamily: "gothic",
-                          ),
-                        ),
-                        Text(
-                          "${repCounter}",
-                          style: const TextStyle(
-                              fontSize: 45,
-                              color: Color(0xfff7a007),
-                              fontFamily: "gothic"),
-                        )
-                      ],
+                  children: [
+                    const Text(
+                      "Counter : ",
+                      style: TextStyle(
+                        fontSize: 45,
+                        color: Color(0xff262e57),
+                        fontFamily: "gothic",
+                      ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment:
+                    Text(
+                      "${repCounter}",
+                      style: const TextStyle(
+                          fontSize: 45,
+                          color: Color(0xfff7a007),
+                          fontFamily: "gothic"),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment:
                       widget.workoutSource == 2.2 || widget.workoutSource == 3
                           ? MainAxisAlignment.spaceEvenly
                           : MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          ((setTotalSeconds / 60).toInt() < 10
+                  children: [
+                    Text(
+                      ((setTotalSeconds / 60).toInt() < 10
                               ? "0" + (setTotalSeconds / 60).toInt().toString()
                               : (setTotalSeconds / 60).toInt().toString()) +
-                              " : " +
-                              ((setTotalSeconds % 60).toInt() < 10
-                                  ? "0" + (setTotalSeconds % 60).toInt().toString()
-                                  : (setTotalSeconds % 60).toInt().toString()),
-                          style: TextStyle(
-                              fontFamily: "gothic",
-                              color: Color(0xff262e57),
-                              fontSize: 35),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              widget.workoutSource == 2.2 ||
+                          " : " +
+                          ((setTotalSeconds % 60).toInt() < 10
+                              ? "0" + (setTotalSeconds % 60).toInt().toString()
+                              : (setTotalSeconds % 60).toInt().toString()),
+                      style: TextStyle(
+                          fontFamily: "gothic",
+                          color: Color(0xff262e57),
+                          fontSize: 35),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          widget.workoutSource == 2.2 ||
                                   widget.workoutSource == 3
-                                  ? stopSoloWorkouts()
-                                  : stopWorkoutsSetsBased();
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xffc32b42)),
-                                shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(32.0),
-                                    ))),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  "Stop Training",
-                                  style: TextStyle(
-                                      fontFamily: "gothic",
-                                      fontSize: 20,
-                                      color: Colors.white),
-                                )
-                              ],
-                            ))
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                        clipBehavior: Clip.antiAlias,
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(50)),
-                        child: setFinished
-                            ? SizedBox(
+                              ? stopSoloWorkouts()
+                              : stopWorkoutsSetsBased();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xffc32b42)),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Stop Training",
+                              style: TextStyle(
+                                  fontFamily: "gothic",
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ))
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    clipBehavior: Clip.antiAlias,
+                    margin: const EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: setFinished
+                        ? SizedBox(
                             height: 500,
                             child: Center(
                                 child: Text(
-                                  "Please rest some Time",
-                                  style:
+                              "Please rest some Time",
+                              style:
                                   TextStyle(fontSize: 30, fontFamily: "gothic"),
-                                )))
-                            : CameraPreview(controller)),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "${correction}",
-                      style: const TextStyle(
-                          fontSize: 40,
-                          color: Color(0xfff7a007),
-                          fontFamily: "gothic"),
-                    ),
-                  ],
+                            )))
+                        : CameraPreview(controller)),
+                const SizedBox(
+                  height: 20,
                 ),
-                CustomPaint(
-                  painter: PosePainter(landmarks, poseIsCorrect),
+                Text(
+                  "${correction}",
+                  style: const TextStyle(
+                      fontSize: 40,
+                      color: Color(0xfff7a007),
+                      fontFamily: "gothic"),
                 ),
-                myBackDropFilter,
-                startPressed
-                    ? Container()
-                    : Center(
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                          fixedSize: MaterialStateProperty.all(const Size(
-                            220,
-                            60,
-                          )),
-                          backgroundColor: MaterialStateProperty.all(
-                              const Color(0xff262e57)),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ))),
-                      onPressed: () async {
-                        startPressed = true;
-                        myBackDropFilter = BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
-
-                        // Take the Picture in a try / catch block. If anything goes wrong,
-                        // catch the error.
-                        startCameraStream();
-                        workoutTimer();
-
-                        setState(() {});
-                      },
-                      child: const Text(
-                        "Start",
-                        style: TextStyle(
-                            fontSize: 35,
-                            color: Colors.white,
-                            fontFamily: "gothic",
-                            fontWeight: FontWeight.bold),
-                      )),
-                ),
-                setFinished ? restProcedure() : Container()
               ],
-            )));
+            ),
+            CustomPaint(
+              painter: PosePainter(landmarks, poseIsCorrect),
+            ),
+            myBackDropFilter,
+            startPressed
+                ? Container()
+                : Center(
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(const Size(
+                              220,
+                              60,
+                            )),
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xff262e57)),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ))),
+                        onPressed: () async {
+                          startPressed = true;
+                          myBackDropFilter = BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
+
+                          // Take the Picture in a try / catch block. If anything goes wrong,
+                          // catch the error.
+                          startCameraStream();
+                          workoutTimer();
+
+                          setState(() {});
+                        },
+                        child: const Text(
+                          "Start",
+                          style: TextStyle(
+                              fontSize: 35,
+                              color: Colors.white,
+                              fontFamily: "gothic",
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ),
+            setFinished ? restProcedure() : Container()
+          ],
+        )));
   }
 
   takePictureTimer() async {
@@ -595,57 +595,57 @@ class _CameraAppState extends State<CameraApp> {
     return Center(
         child: restTimerNow == 0
             ? ElevatedButton(
-            style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(Size(
-                  220,
-                  60,
-                )),
-                backgroundColor:
-                MaterialStateProperty.all(Color(0xfff7a007)),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                ))),
-            onPressed: () {
-              setState(() {
-                setTotalSeconds = 0;
-                restTimerNow = 20;
-                setFinished = false;
-                //controller.initialize();
-                myBackDropFilter = BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
-              });
-            },
-            child: Text(
-              "Start next set",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontFamily: "gothic",
-                  color: Color(0xff262e57)),
-            ))
+                style: ButtonStyle(
+                    fixedSize: MaterialStateProperty.all(Size(
+                      220,
+                      60,
+                    )),
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xfff7a007)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                    ))),
+                onPressed: () {
+                  setState(() {
+                    setTotalSeconds = 0;
+                    restTimerNow = 20;
+                    setFinished = false;
+                    //controller.initialize();
+                    myBackDropFilter = BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0));
+                  });
+                },
+                child: Text(
+                  "Start next set",
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontFamily: "gothic",
+                      color: Color(0xff262e57)),
+                ))
             : SizedBox(
-          height: 200,
-          width: 200,
-          child: Stack(
-            fit: StackFit.expand,
-            alignment: Alignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(
-                value: restTimerNow / 20,
-                strokeWidth: 8,
-                color: Color(0xfff7a007),
-              ),
-              Center(
-                  child: Text(
-                    restTimerNow.toString(),
-                    style: TextStyle(
-                        fontFamily: "gothic",
-                        fontSize: 80,
-                        color: Color(0xff262e57)),
-                    textAlign: TextAlign.center,
-                  ))
-            ],
-          ),
-        ));
+                height: 200,
+                width: 200,
+                child: Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(
+                      value: restTimerNow / 20,
+                      strokeWidth: 8,
+                      color: Color(0xfff7a007),
+                    ),
+                    Center(
+                        child: Text(
+                      restTimerNow.toString(),
+                      style: TextStyle(
+                          fontFamily: "gothic",
+                          fontSize: 80,
+                          color: Color(0xff262e57)),
+                      textAlign: TextAlign.center,
+                    ))
+                  ],
+                ),
+              ));
   }
 
   startRestTimer() {
@@ -684,7 +684,7 @@ class _CameraAppState extends State<CameraApp> {
     ApiManager.addToHistory(widget.email, tmp);
   }
 
-  final ip = "192.168.0.103";
+  final ip = "192.168.1.15";
   final port = "5000";
 
   void startCameraStream() async {
@@ -712,13 +712,9 @@ class _CameraAppState extends State<CameraApp> {
 
         final data = json.decode(response.body);
 
-        repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
-        correction = data["correction"];
-        //landmarks = data['landmarks'];
-        // poseIsCorrect = data['poseIsCorrect'];
-
         setState(() {
-
+          repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
+          correction = data["correction"];
           landmarks = data['landmarks'];
           poseIsCorrect = data['poseIsCorrect'];
         });
