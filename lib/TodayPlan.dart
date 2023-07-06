@@ -172,7 +172,7 @@ class _TodayPlanState extends State<TodayPlan> {
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {
               return Container(
-                height: 400,
+                height: 420,
                 margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
                 child: GestureDetector(
                   onTap: () {

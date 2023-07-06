@@ -206,7 +206,7 @@ class _SearchWorkoutState extends State<SearchWorkout> {
                             );
                           },
                           child: Container(
-                            height: 350,
+                            height: 380,
                             margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
                             child: Card(
                               elevation: 15,

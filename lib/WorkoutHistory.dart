@@ -222,14 +222,14 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                           fontSize: 27,
                           fontFamily: "gothic",
                           color: Color(0xfff7a007)),
-                    ),
+                    ),/*
                     Text(
                       "Plans",
                       style: TextStyle(
                           fontSize: 27,
                           fontFamily: "gothic",
                           color: Color(0xfff7a007)),
-                    )
+                    )*/
                   ],
                 ),
               ),
@@ -239,7 +239,6 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                 isWorkoutHistoryEmpty
                     ? noHistoryMessage()
                     : WorkoutsListBuilder(),
-                isPlanHistoryEmpty ? noHistoryMessage() : Container(),
               ],
             ):Center(
               child: SizedBox(
@@ -363,7 +362,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                         Row(
                           children: [
                             Text(
-                              "Accuracy:  ",
+                              "Performance:  ",
                               style: TextStyle(
                                   fontSize: 24,
                                   fontFamily: "gothic",
@@ -371,7 +370,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                             ),
                             Text(
                               filteredWorkoutsHistory[index]
-                                      .performance
+                                      .performance.ceil()
                                       .toString() +
                                   " %",
                               style:
