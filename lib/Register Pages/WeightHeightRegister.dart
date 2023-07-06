@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../classes/User.dart';
 import 'GenderAgeRegister.dart';
 
+// ignore: must_be_immutable
 class WeightHeightRegister extends StatefulWidget {
   User activeUser;
 

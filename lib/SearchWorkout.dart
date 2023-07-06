@@ -3,7 +3,6 @@ import 'package:pose_fit/SettingWorkoutDetails.dart';
 import 'package:pose_fit/UpdateProfile.dart';
 import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
-import 'CameraPage.dart';
 import 'package:camera/camera.dart';
 
 import 'Home.dart';

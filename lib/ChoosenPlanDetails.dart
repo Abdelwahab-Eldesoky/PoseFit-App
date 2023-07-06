@@ -9,6 +9,7 @@ void main() {
   runApp(ChoosenPlanDetails("Hoba2001@gmail.com", "Beginner"));
 }
 
+// ignore: must_be_immutable
 class ChoosenPlanDetails extends StatefulWidget {
   String email;
   String planName;

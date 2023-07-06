@@ -12,6 +12,7 @@ void main() {
   //runApp(SettingWorkoutDetails("Hoba2001@gmail.com"));
 }
 
+// ignore: must_be_immutable
 class SettingWorkoutDetails extends StatefulWidget {
   String email;
   Workout choosenWorkout;

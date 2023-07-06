@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pose_fit/ChoosenPlanDetails.dart';
 import 'package:pose_fit/UpdateProfile.dart';
-import 'package:pose_fit/WorkoutHistory.dart';
 import 'package:pose_fit/classes/ApiManager.dart';
 
 import 'Home.dart';
-import 'TodayPlan.dart';
 import 'classes/Level.dart';
 
 class ChoosePlan extends StatefulWidget {
