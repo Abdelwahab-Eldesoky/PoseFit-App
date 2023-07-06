@@ -249,6 +249,7 @@ class _SettingWorkoutDetailsState extends State<SettingWorkoutDetails> {
                             const BorderSide(width: 1.5, color: Colors.indigo),
                       ))),
                   onPressed: () {
+                    widget.choosenWorkout.reps=20000;
                     Navigator.push(
                         context,
                         MaterialPageRoute(

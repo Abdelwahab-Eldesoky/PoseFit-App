@@ -11,13 +11,14 @@ class ApiManager {
 //https://posefit.onrender.com
 //http://192.168.1.97:3000
 
- static final String domain="http://192.168.0.107:3000";
+ static final String domain="http://192.168.1.23:3000";
   static Future<List<Workout>> getPlan(String email) async {
     final response = await http.post(
         Uri.parse('${domain}/api/user/plan'),
             headers: {"Content-Type": "application/json"},
             body: json.encode({'email': email}));
         final data = jsonDecode(response.body);
+        print(data.toString());
     List<Workout> workoutList = [];
     var extractWorkout;
     for (var details in data) {
@@ -142,7 +143,7 @@ class ApiManager {
    List<WorkoutHistoryEntry> historyList = [];
    for (var historyEntry in historyHolder.reversed) {
      WorkoutHistoryEntry work =
-     new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration'],historyEntry['performance']);
+     new WorkoutHistoryEntry(historyEntry['workoutName'], historyEntry['date'],historyEntry['reps'],historyEntry['duration'],historyEntry['performance'].toDouble());
      historyList.add(work);
    }
 

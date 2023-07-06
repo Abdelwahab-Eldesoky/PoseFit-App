@@ -12,6 +12,7 @@ import 'RankingBoard.dart';
 import 'TodayPlan.dart';
 import 'SearchWorkout.dart';
 import 'classes/Workout.dart';
+import 'classes/WorkoutHistoryEntry.dart';
 
 void main() {
   runApp(HomePage("Hoba2001@gmail.com"));
@@ -30,11 +31,20 @@ class _HomePageState extends State<HomePage> {
   String name = "";
   DailyChallenge todayChallenge=DailyChallenge(new Workout.fromWorkout("Not Loaded Yet","","",0), "", 0, "");
   List<CameraDescription> cameras = [];
+  List<WorkoutHistoryEntry> myWorkoutsHistory = [];
 
   Future<void> getName() async {
     name = await ApiManager.getPersonName(widget.email);
     setState(() {});
   }
+
+  void initHistories() async {
+    List<WorkoutHistoryEntry> tmp = await ApiManager.getHistory(widget.email);
+
+    tmp.forEach((historyEntry) {
+      print("mmkn n4oof  "+double.parse((DateTime.parse(historyEntry.date).day.toString()+"."+DateTime.parse(historyEntry.date).month.toString())).toString());
+      myWorkoutsHistory.add(historyEntry);
+    });}
 
   Future<void> setCameras() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +72,7 @@ class _HomePageState extends State<HomePage> {
     setCameras();
     getName();
     getTodayChallenge();
+    initHistories();
     setState(() {
 
     });
@@ -572,16 +583,17 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: 260,
                   child: SfCartesianChart(
+
                     title:
-                        ChartTitle(text: "your activity by minutes everyday"),
+                        ChartTitle(text: "Your Performance over days"),
                     series: <ChartSeries>[
-                      LineSeries<ProgressData, double>(
+                      LineSeries<WorkoutHistoryEntry, double>(
                           name: 'Activity',
-                          dataSource: _chartData,
-                          xValueMapper: (ProgressData progress, _) =>
-                              double.parse(progress.date),
-                          yValueMapper: (ProgressData progress, _) =>
-                              progress.minutes,
+                          dataSource: myWorkoutsHistory,
+                          xValueMapper: (WorkoutHistoryEntry progress, _) =>
+                              double.parse((DateTime.parse(progress.date).day.toString()+"."+DateTime.parse(progress.date).month.toString()).toString()),
+                          yValueMapper: (WorkoutHistoryEntry progress, _) =>
+                              progress.performance.ceil().toDouble(),
                           dataLabelSettings: DataLabelSettings(isVisible: true),
                           enableTooltip: true)
                     ],
