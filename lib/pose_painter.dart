@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 bool inRange(dynamic joint) {
   bool xValue = true;
@@ -117,6 +118,7 @@ class PosePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant PosePainter oldDelegate) {
-    return true;
+    var landmarksChanged = ListEquality().equals(oldDelegate.landmarks, landmarks) == false;
+    return landmarksChanged;
   }
 }

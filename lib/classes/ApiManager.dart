@@ -7,7 +7,7 @@ import 'User.dart';
 import 'Workout.dart';
 
 class ApiManager {
-  static final String domain = "http://192.168.0.103:3000";
+  static final String domain = "http://192.168.1.15:3000";
   static Future<List<Workout>> getPlan(String email) async {
     final response = await http.post(Uri.parse('${domain}/api/user/plan'),
         headers: {"Content-Type": "application/json"},
