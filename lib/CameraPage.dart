@@ -46,7 +46,7 @@ class CameraApp extends StatefulWidget {
 }
 
 class _CameraAppState extends State<CameraApp> {
-  String userName="Not Loaded Yet";
+  String userName = "Not Loaded Yet";
   int repCounter = 0;
   int setCounter = 0;
   String correction = "";
@@ -56,7 +56,7 @@ class _CameraAppState extends State<CameraApp> {
   int restTimerNow = 20;
 
   int setTotalSeconds = 0;
-  
+
   //skeleton
   List landmarks = []; //List.filled(8, null, growable: false);
   bool poseIsCorrect = false;
@@ -79,9 +79,10 @@ class _CameraAppState extends State<CameraApp> {
     }
   }
 
-  void getUserName()async{
-    userName=await ApiManager.getPersonName(widget.email);
+  void getUserName() async {
+    userName = await ApiManager.getPersonName(widget.email);
   }
+
   BackdropFilter myBackDropFilter = BackdropFilter(
     filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
     child: Container(
@@ -100,13 +101,12 @@ class _CameraAppState extends State<CameraApp> {
     });
 
     controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-      widget.cameras[1],
-      // Define the resolution to use.
-      ResolutionPreset.medium,
-      enableAudio: false,
-      imageFormatGroup: ImageFormatGroup.jpeg
-    );
+        // Get a specific camera from the list of available cameras.
+        widget.cameras[1],
+        // Define the resolution to use.
+        ResolutionPreset.medium,
+        enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.jpeg);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -126,7 +126,7 @@ class _CameraAppState extends State<CameraApp> {
     });
   }
 
-  void setFinishedMessage(){
+  void setFinishedMessage() {
     showDialog(
       context: context,
       builder: (context) {
@@ -146,15 +146,20 @@ class _CameraAppState extends State<CameraApp> {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            content: Text("You have finished the whole set",textAlign: TextAlign.center,style: TextStyle(fontSize: 23,fontFamily: "gothic",color: Color(0xff262e57)),),
+            content: Text(
+              "You have finished the whole set",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 23, fontFamily: "gothic", color: Color(0xff262e57)),
+            ),
             elevation: 30,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25))),
             actions: [
               TextButton(
                   onPressed: () {
-
-                    ApiManager.updateWorkoutStatus(widget.email, widget.runningWorkout.id);
+                    ApiManager.updateWorkoutStatus(
+                        widget.email, widget.runningWorkout.id);
 
                     setFinished = true;
                     restTimerNow = 0;
@@ -168,18 +173,19 @@ class _CameraAppState extends State<CameraApp> {
                   },
                   child: Center(
                       child: Text(
-                        "OK",
-                        style: TextStyle(
-                            fontSize: 27,
-                            fontFamily: "gothic",
-                            color: Color(0xff262e57)),
-                      )))
+                    "OK",
+                    style: TextStyle(
+                        fontSize: 27,
+                        fontFamily: "gothic",
+                        color: Color(0xff262e57)),
+                  )))
             ],
           );
         }
       },
     );
   }
+
   void stopWorkoutsSetsBased() {
     showDialog(
       context: context,
@@ -219,12 +225,12 @@ class _CameraAppState extends State<CameraApp> {
                       },
                       child: Center(
                           child: Text(
-                            "No, Wait",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xff262e57)),
-                          ))),
+                        "No, Wait",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xff262e57)),
+                      ))),
                   TextButton(
                       onPressed: () {
                         addToHistory(repCounter);
@@ -234,17 +240,20 @@ class _CameraAppState extends State<CameraApp> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => widget.workoutSource==2.1?HomePage(widget.email):TodayPlan(widget.email, 0)),(route) => false,
+                              builder: (context) => widget.workoutSource == 2.1
+                                  ? HomePage(widget.email)
+                                  : TodayPlan(widget.email, 0)),
+                          (route) => false,
                         );
                       },
                       child: Center(
                           child: Text(
-                            "Yes, Sure",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "gothic",
-                                color: Color(0xffc32b42)),
-                          ))),
+                        "Yes, Sure",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "gothic",
+                            color: Color(0xffc32b42)),
+                      ))),
                 ],
               )
             ],
@@ -253,6 +262,7 @@ class _CameraAppState extends State<CameraApp> {
       },
     );
   }
+
   void stopSoloWorkouts() {
     showDialog(
       context: context,
@@ -304,16 +314,18 @@ class _CameraAppState extends State<CameraApp> {
                         setFinished = true;
                         restTimerNow = 0;
                         controller.dispose();
-                       if(widget.workoutSource==3){
-                         double progress=repCounter/setTotalSeconds;
-                         Rank tmp=new Rank(userName,setTotalSeconds,repCounter,progress);
+                        if (widget.workoutSource == 3) {
+                          double progress = repCounter / setTotalSeconds;
+                          Rank tmp = new Rank(
+                              userName, setTotalSeconds, repCounter, progress);
 
-                         ApiManager.addRank(widget.email, tmp);
-                       }
+                          ApiManager.addRank(widget.email, tmp);
+                        }
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomePage(widget.email)),(route) => false,
+                              builder: (context) => HomePage(widget.email)),
+                          (route) => false,
                         );
                       },
                       child: Center(
@@ -364,11 +376,10 @@ class _CameraAppState extends State<CameraApp> {
 
     if (repCounter == widget.runningWorkout.reps &&
         (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
-
-      if(setCounter+1==widget.runningWorkout.sets){ // if all sets finished close page
+      if (setCounter + 1 == widget.runningWorkout.sets) {
+        // if all sets finished close page
 
         setFinishedMessage();
-
       }
 
       setCounter++;
@@ -398,7 +409,7 @@ class _CameraAppState extends State<CameraApp> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: Stack(
+            body: Stack(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -446,35 +457,39 @@ class _CameraAppState extends State<CameraApp> {
                           color: Color(0xff262e57),
                           fontSize: 35),
                     ),
-                    SizedBox(width: 20,),
+                    SizedBox(
+                      width: 20,
+                    ),
                     ElevatedButton(
-                            onPressed: () {
-                              widget.workoutSource == 2.2 || widget.workoutSource == 3?
-                              stopSoloWorkouts():stopWorkoutsSetsBased();
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xffc32b42)),
-                                shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0),
-                                ))),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  "Stop Training",
-                                  style: TextStyle(
-                                      fontFamily: "gothic",
-                                      fontSize: 20,
-                                      color: Colors.white),
-                                )
-                              ],
-                            ))
+                        onPressed: () {
+                          widget.workoutSource == 2.2 ||
+                                  widget.workoutSource == 3
+                              ? stopSoloWorkouts()
+                              : stopWorkoutsSetsBased();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xffc32b42)),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Stop Training",
+                              style: TextStyle(
+                                  fontFamily: "gothic",
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ))
                   ],
                 ),
                 const SizedBox(
@@ -656,34 +671,37 @@ class _CameraAppState extends State<CameraApp> {
   }
 
   void addToHistory(int reps) {
-    double performance=((widget.runningWorkout.duration*reps)/setTotalSeconds)*100;
-    if(performance>100){
-      performance=100;
+    double performance =
+        ((widget.runningWorkout.duration * reps) / setTotalSeconds) * 100;
+    if (performance > 100) {
+      performance = 100;
     }
     WorkoutHistoryEntry tmp = new WorkoutHistoryEntry(
-        widget.runningWorkout.name, DateTime.now().toIso8601String(), reps,setTotalSeconds,performance);
+        widget.runningWorkout.name,
+        DateTime.now().toIso8601String(),
+        reps,
+        setTotalSeconds,
+        performance);
     ApiManager.addToHistory(widget.email, tmp);
   }
 
   final ip = "192.168.1.15";
   final port = "5000";
 
-void startCameraStream() async {
-
+  void startCameraStream() async {
     var lastAccess = DateTime.now();
     var isInProgress = false;
 
     controller.startImageStream((image) async {
-      
       if (isInProgress ||
-          DateTime.now().difference(lastAccess).inMilliseconds < 100 || setFinished) {
+          DateTime.now().difference(lastAccess).inMilliseconds < 200 ||
+          setFinished) {
         return;
       }
 
       lastAccess = DateTime.now();
 
       try {
-        
         isInProgress = true;
 
         final response = await http.post(
@@ -697,8 +715,14 @@ void startCameraStream() async {
 
         repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
         correction = data["correction"];
-        landmarks = data['landmarks'];
-        poseIsCorrect = data['poseIsCorrect'];
+        //landmarks = data['landmarks'];
+        // poseIsCorrect = data['poseIsCorrect'];
+
+        setState(() {
+
+          landmarks = data['landmarks'];
+          poseIsCorrect = data['poseIsCorrect'];
+        });
 
         if (data['reps'] != lastCount) {
           if (soundId != null) {
@@ -730,7 +754,6 @@ void startCameraStream() async {
           addToHistory(widget.runningWorkout.reps);
           startRestTimer();
         }
-
       } catch (e) {
         controller.stopImageStream();
       }
