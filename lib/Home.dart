@@ -42,7 +42,6 @@ class _HomePageState extends State<HomePage> {
     List<WorkoutHistoryEntry> tmp = await ApiManager.getHistory(widget.email);
 
     tmp.forEach((historyEntry) {
-      print("mmkn n4oof  "+double.parse((DateTime.parse(historyEntry.date).day.toString()+"."+DateTime.parse(historyEntry.date).month.toString())).toString());
       myWorkoutsHistory.add(historyEntry);
     });}
 
@@ -52,7 +51,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getTodayChallenge() async {
-    print("ana t3baaaaaaaaaaaaaaan");
     todayChallenge = await ApiManager.getChallenge();
     setState(() {
       print(todayChallenge.reps);
@@ -265,7 +263,6 @@ class _HomePageState extends State<HomePage> {
                               alignment: Alignment.topRight,
                               child: TextButton(
                                 onPressed: () {
-                                  print("he5aaa");
                                   showDialog(
                                     context: context,
                                     builder: (context) {
