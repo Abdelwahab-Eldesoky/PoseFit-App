@@ -47,7 +47,6 @@ class PosePainter extends CustomPainter {
       ..strokeWidth = 4.0
       ..color = Colors.blue.shade700;
 
-    print("Paint Skeleton AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
     for (var joint in landmarks) {
       joint[0] = x + (joint[0] * imageSize.width);

@@ -178,6 +178,7 @@ class _LoginState extends State<Login> {
 
                                   if (await ApiManager.validateUser(
                                       email.text, password.text)) {
+                                    ApiManager.getPersonName(email.text);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -191,7 +192,6 @@ class _LoginState extends State<Login> {
                                             content: new Text(
                                                 "Please fill right data or Sign up")));
                                   }
-                                  ApiManager.getPersonName(email.text);
                                 },
                                 child: Text(
                                   "Log In",
