@@ -25,7 +25,6 @@ import 'classes/WorkoutHistoryEntry.dart';
 
 /// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
-  /// Default Constructor
   final List<CameraDescription> cameras;
   final Workout runningWorkout;
   final String email;
@@ -56,7 +55,6 @@ class _CameraAppState extends State<CameraApp> {
   int restTimerNow = 20;
 
   int setTotalSeconds = 0;
-
   //skeleton
   List landmarks = []; //List.filled(8, null, growable: false);
   bool poseIsCorrect = false;
@@ -71,6 +69,10 @@ class _CameraAppState extends State<CameraApp> {
 
   FlutterTts myVoiceCaller = FlutterTts();
 
+  final ip = "192.168.1.15";
+  final port = "5000";
+
+  
   @override
   void setState(fn) {
     if (mounted) {
@@ -344,52 +346,52 @@ class _CameraAppState extends State<CameraApp> {
     );
   }
 
-  Future<void> _sendImage(List<int> bytes) async {
-    const workout = "bicepCurl";
-    final base64Image = base64Encode(bytes);
+  // Future<void> _sendImage(List<int> bytes) async {
+  //   const workout = "bicepCurl";
+  //   final base64Image = base64Encode(bytes);
 
-    final response = await http.post(
-        Uri.parse('http://192.168.1.23:3000/api/model/${workout}'),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({'data': base64Image}));
+  //   final response = await http.post(
+  //       Uri.parse('http://192.168.1.23:3000/api/model/${workout}'),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: json.encode({'data': base64Image}));
 
-    final data = jsonDecode(response.body);
+  //   final data = jsonDecode(response.body);
 
-    repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
-    correction = data["correction"];
+  //   repCounter = data['reps'] - (setCounter * widget.runningWorkout.reps);
+  //   correction = data["correction"];
 
-    if (data['reps'] != lastCount) {
-      if (soundId != null) {
-        soundEffect.play(soundId!);
-      }
-      lastCount = data['reps'];
-    }
+  //   if (data['reps'] != lastCount) {
+  //     if (soundId != null) {
+  //       soundEffect.play(soundId!);
+  //     }
+  //     lastCount = data['reps'];
+  //   }
 
-    if (correction != lastCorrection || repeatCorrectionCounter == 5) {
-      await myVoiceCaller.speak(correction);
-      lastCorrection = correction;
-      repeatCorrectionCounter = 1;
-    } else {
-      repeatCorrectionCounter++;
-    }
+  //   if (correction != lastCorrection || repeatCorrectionCounter == 20) {
+  //     await myVoiceCaller.speak(correction);
+  //     lastCorrection = correction;
+  //     repeatCorrectionCounter = 1;
+  //   } else {
+  //     repeatCorrectionCounter++;
+  //   }
 
-    if (repCounter == widget.runningWorkout.reps &&
-        (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
-      if (setCounter + 1 == widget.runningWorkout.sets) {
-        // if all sets finished close page
+  //   if (repCounter == widget.runningWorkout.reps &&
+  //       (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
+  //     if (setCounter + 1 == widget.runningWorkout.sets) {
+  //       // if all sets finished close page
 
-        setFinishedMessage();
-      }
+  //       setFinishedMessage();
+  //     }
 
-      setCounter++;
-      setFinished = true;
-      setTotalSeconds = 0;
-      correction = "";
-      addToHistory(widget.runningWorkout.reps);
-      startRestTimer();
-    }
-    setState(() {});
-  }
+  //     setCounter++;
+  //     setFinished = true;
+  //     setTotalSeconds = 0;
+  //     correction = "";
+  //     addToHistory(widget.runningWorkout.reps);
+  //     startRestTimer();
+  //   }
+  //   setState(() {});
+  // }
 
   @override
   void dispose() {
@@ -671,7 +673,7 @@ class _CameraAppState extends State<CameraApp> {
 
   void addToHistory(int reps) {
     double performance =
-        ((widget.runningWorkout.duration * reps) / setTotalSeconds) * 100;
+        ((widget.runningWorkout.duration * reps) / setTotalSeconds) * 50;
     if (performance > 100) {
       performance = 100;
     }
@@ -684,16 +686,13 @@ class _CameraAppState extends State<CameraApp> {
     ApiManager.addToHistory(widget.email, tmp);
   }
 
-  final ip = "192.168.1.15";
-  final port = "5000";
-
   void startCameraStream() async {
     var lastAccess = DateTime.now();
     var isInProgress = false;
 
     controller.startImageStream((image) async {
       if (isInProgress ||
-          DateTime.now().difference(lastAccess).inMilliseconds < 300 ||
+          DateTime.now().difference(lastAccess).inMilliseconds < 50 ||
           setFinished) {
         return;
       }
@@ -726,7 +725,7 @@ class _CameraAppState extends State<CameraApp> {
           lastCount = data['reps'];
         }
 
-        if (correction != lastCorrection || repeatCorrectionCounter == 5) {
+        if (correction != lastCorrection || repeatCorrectionCounter == 20) {
           await myVoiceCaller.speak(correction);
           lastCorrection = correction;
           repeatCorrectionCounter = 1;
@@ -737,8 +736,8 @@ class _CameraAppState extends State<CameraApp> {
         if (repCounter == widget.runningWorkout.reps &&
             (widget.workoutSource == 1 || widget.workoutSource == 2.2)) {
           if (setCounter + 1 == widget.runningWorkout.sets) {
-            // if all sets finished close page
 
+            // if all sets finished close page
             setFinishedMessage();
           }
 

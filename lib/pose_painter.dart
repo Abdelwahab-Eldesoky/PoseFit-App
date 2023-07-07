@@ -23,14 +23,13 @@ class PosePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
 
-
     if(landmarks.isEmpty){
       return;
     }
 
-    Size imageSize = const Size(400, 640);
-    const double x = 10;
-    const double y = 120;
+    Size imageSize = const Size(400, 630);
+    const double startX = 8;
+    const double startY = 160;
 
     final correctPoseLine = Paint()
       ..strokeWidth = 4.0
@@ -50,8 +49,8 @@ class PosePainter extends CustomPainter {
 
 
     for (var joint in landmarks) {
-      joint[0] = x + (joint[0] * imageSize.width);
-      joint[1] = y + (joint[1] * imageSize.height);
+      joint[0] = startX + (joint[0] * imageSize.width);
+      joint[1] = startY + (joint[1] * imageSize.height);
     }
 
     void paintLine(var joint1, var joint2, Paint paintType) {
