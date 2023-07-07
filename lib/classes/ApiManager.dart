@@ -6,8 +6,13 @@ import 'Rank.dart';
 import 'User.dart';
 import 'Workout.dart';
 
+final ip = "192.168.1.15";
+final port = "3000";
+
 class ApiManager {
-  static final String domain = "http://192.168.1.42:3000";
+
+  static final String domain = "http://$ip:$port";
+
   static Future<List<Workout>> getPlan(String email) async {
     final response = await http.post(Uri.parse('${domain}/api/user/plan'),
         headers: {"Content-Type": "application/json"},
