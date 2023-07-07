@@ -162,7 +162,7 @@ class _ChoosenPlanDetailsState extends State<ChoosenPlanDetails> {
                       itemCount: planWorkouts.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          height: 400,
+                          height: 405,
                           margin: EdgeInsets.fromLTRB(5, 5, 5, 25),
                           child: Card(
                             elevation: 15,

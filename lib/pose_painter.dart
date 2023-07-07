@@ -30,7 +30,7 @@ class PosePainter extends CustomPainter {
 
     Size imageSize = const Size(400, 640);
     const double x = 10;
-    const double y = 120;
+    const double y = 140;
 
     final correctPoseLine = Paint()
       ..strokeWidth = 4.0

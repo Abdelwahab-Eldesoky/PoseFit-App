@@ -365,7 +365,7 @@ class _CameraAppState extends State<CameraApp> {
       lastCount = data['reps'];
     }
 
-    if (correction != lastCorrection || repeatCorrectionCounter == 5) {
+    if (correction != lastCorrection || repeatCorrectionCounter == 20) {
       await myVoiceCaller.speak(correction);
       lastCorrection = correction;
       repeatCorrectionCounter = 1;
@@ -671,7 +671,7 @@ class _CameraAppState extends State<CameraApp> {
 
   void addToHistory(int reps) {
     double performance =
-        ((widget.runningWorkout.duration * reps) / setTotalSeconds) * 100;
+        ((widget.runningWorkout.duration * reps) / setTotalSeconds) * 50;
     if (performance > 100) {
       performance = 100;
     }
@@ -684,16 +684,15 @@ class _CameraAppState extends State<CameraApp> {
     ApiManager.addToHistory(widget.email, tmp);
   }
 
-  final ip = "192.168.1.15";
+  final ip = "192.168.1.42";
   final port = "5000";
-
   void startCameraStream() async {
     var lastAccess = DateTime.now();
     var isInProgress = false;
 
     controller.startImageStream((image) async {
       if (isInProgress ||
-          DateTime.now().difference(lastAccess).inMilliseconds < 300 ||
+          DateTime.now().difference(lastAccess).inMilliseconds < 50 ||
           setFinished) {
         return;
       }
@@ -726,7 +725,7 @@ class _CameraAppState extends State<CameraApp> {
           lastCount = data['reps'];
         }
 
-        if (correction != lastCorrection || repeatCorrectionCounter == 5) {
+        if (correction != lastCorrection || repeatCorrectionCounter == 20) {
           await myVoiceCaller.speak(correction);
           lastCorrection = correction;
           repeatCorrectionCounter = 1;
